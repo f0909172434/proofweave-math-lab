@@ -87,7 +87,7 @@
     {
       "artifact": null,
       "check_id": "unit-tests",
-      "message": "----------------------------------------------------------------------\nRan 72 tests in 1.355s\n\nOK",
+      "message": "----------------------------------------------------------------------\nRan 72 tests in 1.352s\n\nOK",
       "severity": "ERROR",
       "status": "PASS"
     },
@@ -101,7 +101,7 @@
     {
       "artifact": null,
       "check_id": "release-snapshot",
-      "message": "Candidate snapshot 098976f80ebc89544e2b2f1e97f81fa4663434f824d451b21a1a15388e43e922 covers 345 files (git head 9240e0af6cfc87ab54e1acc3dbaba7cc511e1993)",
+      "message": "Candidate snapshot aa237aa2f353df9a6230139bc5e532aea275382da0f9902d97b4a44a216c9df5 covers 345 files (git head 6029ba243838b1f2a83e25e824f8a7fcda015a51)",
       "severity": "ERROR",
       "status": "PASS"
     },
@@ -121,9 +121,9 @@
   "snapshot": {
     "file_count": 345,
     "git_dirty": false,
-    "git_head": "9240e0af6cfc87ab54e1acc3dbaba7cc511e1993",
+    "git_head": "6029ba243838b1f2a83e25e824f8a7fcda015a51",
     "manifest": "state/release_manifest.json",
-    "snapshot_id": "098976f80ebc89544e2b2f1e97f81fa4663434f824d451b21a1a15388e43e922"
+    "snapshot_id": "aa237aa2f353df9a6230139bc5e532aea275382da0f9902d97b4a44a216c9df5"
   },
   "status": "PASS",
   "warnings": 0

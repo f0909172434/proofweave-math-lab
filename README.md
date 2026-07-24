@@ -32,7 +32,7 @@ ProofWeave 是一個在本機執行、與模型供應商無關的數學研究工
 
 在你的 AI 研究代理中選擇「開啟資料夾／Open folder」，選取剛剛解壓縮的 `proofweave-math-lab` 資料夾。務必開啟整個資料夾，而不是只打開 `README.md`。
 
-如果尚未安裝可用的代理，可先參考 OpenAI 官方的 [ChatGPT 與 Codex 快速入門](https://learn.chatgpt.com/docs/quickstart.md)。不同版本的按鈕名稱可能略有差異，但重點都是讓代理取得這個資料夾的工作區權限。
+如果尚未安裝可用的代理，可先參考 OpenAI 官方的 [ChatGPT 與 Codex 快速入門](https://learn.chatgpt.com/docs/quickstart)。不同版本的按鈕名稱可能略有差異，但重點都是讓代理取得這個資料夾的工作區權限。
 
 ### 第 3 步：複製並貼上這段話
 
@@ -171,35 +171,38 @@ ProofWeave 不是一個「輸入題目就保證產生正確證明」的黑盒子
 ## 它怎麼運作
 
 ```mermaid
-flowchart LR
-    U["研究者的問題"] --> I["問題受理與形式化"]
-    I --> S["state/ 持久研究狀態"]
-    S --> W["agents/ 角色 + workflows/ 流程"]
-    W --> E["證明、來源、反例、實驗等證據"]
-    E --> V["冷啟動獨立驗證"]
-    V -->|"ACCEPT"| G["VERIFIED 事實依賴圖"]
-    V -->|"REJECT / UNCERTAIN"| O["缺口、修復或失敗路線"]
-    G --> P["論文與後續研究"]
-    O --> S
-    P --> R["發布檢查"]
-    R --> M["報告 + SHA-256 內容快照"]
+flowchart TB
+    A["1. 提出研究問題"] --> B["2. 受理並形式化"]
+    B --> C["3. 保存研究狀態"]
+    C --> D["4. 產生證明、來源、反例或實驗證據"]
+    D --> E{"5. 獨立驗證"}
+    E -->|"ACCEPT"| F["6A. 寫入 VERIFIED 事實圖"]
+    E -->|"REJECT / UNCERTAIN"| G["6B. 記錄缺口、修復方向或失敗路線"]
+    F --> H["7. 論文與後續研究"]
+    H --> I["8. 發布檢查"]
+    I --> J["9. 報告與 SHA-256 快照"]
 ```
+
+閱讀方式：研究問題先被形式化並保存；不同角色產生可檢查的證據；獨立驗證者作出 `ACCEPT`、`REJECT` 或 `UNCERTAIN` 判定。只有 `ACCEPT` 能進入已驗證事實圖，其他結果則保留為缺口或修復工作。
 
 聊天內容本身不是真理層。研究狀態必須寫入檔案；形式命題只有通過獨立驗證與程式一致性檢查後，才能成為其他正式命題的依賴。
 
 ### 命題生命週期
 
-```mermaid
-stateDiagram-v2
-    [*] --> DRAFT
-    DRAFT --> PROPOSED
-    PROPOSED --> UNDER_REVIEW
-    UNDER_REVIEW --> VERIFIED: independent ACCEPT
-    UNDER_REVIEW --> REJECTED: decisive flaw
-    UNDER_REVIEW --> UNCERTAIN: missing evidence
-    VERIFIED --> REVOKED: later error or invalid dependency
-    VERIFIED --> SUPERSEDED: replaced by a newer fact
-```
+`DRAFT → PROPOSED → UNDER_REVIEW → VERIFIED / REJECTED / UNCERTAIN`
+
+已驗證命題日後也可能變成 `REVOKED` 或 `SUPERSEDED`。
+
+| 狀態 | 意義 |
+| --- | --- |
+| `DRAFT` | 尚未整理成可送審的命題 |
+| `PROPOSED` | 作者已提交完整陳述、假設、依賴與證明包 |
+| `UNDER_REVIEW` | 正由獨立驗證者冷啟動檢查 |
+| `VERIFIED` | 獨立驗證結果為 `ACCEPT`，且通過程式一致性閘門 |
+| `REJECTED` | 發現決定性錯誤，不能進入真理層 |
+| `UNCERTAIN` | 證據、工具或資訊不足，不能視為證明 |
+| `REVOKED` | 先前驗證的事實因新錯誤或無效依賴被撤銷 |
+| `SUPERSEDED` | 已由較新的事實版本取代 |
 
 - 命題作者可以提交 `PROPOSED`，但不能驗證自己的命題。
 - 只有冷啟動的獨立 `theorem_verifier` 可以透過 `ACCEPT` 將命題晉升為 `VERIFIED`。
