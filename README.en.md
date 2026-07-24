@@ -8,6 +8,84 @@
 
 ProofWeave is a local, model-independent workspace for mathematical research, paper writing, and adversarial review. Its core is persistent files and deterministic gates—not chat history. It separates proofs, literature results, numerical evidence, conjectures, and open gaps, and records every model-routing decision without treating model agreement as truth.
 
+## Start here: no coding experience required
+
+You do not need to know Python, Git, JSON, LaTeX, or the command line. The easiest path is to open the entire project folder in an AI agent that can work with local files, then describe your mathematical question in ordinary language.
+
+### 10-minute quick start (recommended)
+
+1. Open the [ProofWeave GitHub page](https://github.com/f0909172434/proofweave-math-lab), choose **Code → Download ZIP**, or use the [direct ZIP download](https://github.com/f0909172434/proofweave-math-lab/archive/refs/heads/main.zip).
+2. Extract the ZIP. Do not work inside the compressed file.
+3. In your AI research agent, choose **Open folder** and select the extracted `proofweave-math-lab` folder. Open the whole folder, not only this README. If needed, see the official [ChatGPT and Codex quickstart](https://learn.chatgpt.com/docs/quickstart.md).
+4. Paste the prompt below and replace the text in brackets with your question.
+
+```text
+I am using ProofWeave for the first time and I do not know how to code.
+Do not ask me to use a terminal, write code, or edit JSON by hand.
+
+Read AGENTS.md, workflows/00_project_intake.md, and
+workflows/01_problem_formalization.md completely. Help me start a new
+mathematics research project.
+
+My research question is:
+[Write your question here. It may be incomplete.]
+
+Ask only one short question at a time and explain in plain language why the
+information is needed. You are responsible for updating state/problem.md,
+state/assumptions.md, state/notation.md, state/research_plan.md, and the other
+required state files. Do not attempt a proof yet. Do not turn a conjecture,
+numerical result, or model consensus into a theorem.
+
+When intake is complete, restate the formal question in plain language, list
+the assumptions and notation, mark every uncertainty as OPEN GAP, recommend
+the next safe step, and run the available project checks. Do not use a paid
+API, upload data, or publish anything without asking me first.
+```
+
+Answer the agent's questions. “I don't know” is a valid answer: the uncertainty should be recorded instead of guessed. The first session should leave a plain-language problem statement, explicit domains and assumptions, a Definition of Done, an `OPEN GAP` list, and one safe next action in the `state/` folder.
+
+## Copy-ready prompts for common tasks
+
+| Goal | Prompt |
+| --- | --- |
+| Check progress | `Read state/STATUS.md, state/open_gaps.md, and state/research_plan.md. Explain in plain language what is established, what remains unknown, and the next step.` |
+| Map literature | `Follow workflows/02_literature_review.md. Verify original sources and distinguish opened evidence from search leads.` |
+| Generate approaches | `Follow workflows/03_idea_swarm.md. Propose 3–5 genuinely different routes, each with its main obstacle, smallest test, and stop condition.` |
+| Attempt a proof | `Follow workflows/04_proof_search.md for the smallest precise claim. Keep gaps UNCERTAIN and do not self-declare VERIFIED.` |
+| Search for a counterexample | `Follow workflows/05_counterexample_search.md. Test endpoints, degenerate cases, and small dimensions first. Treat finite computation only as evidence.` |
+| Run an experiment | `Follow workflows/07_computational_experiment.md. Save configuration, code, data, figures, and limitations, and label the result as evidence rather than proof.` |
+| Review a paper | `Follow workflows/11_full_paper_review.md. Separate fatal, major, and minor issues, and identify decisions that still require a human expert.` |
+| Save a handoff | `Follow workflows/14_session_handoff.md. Update status, decisions, open gaps, and failed routes so another session can continue.` |
+
+## Four things every new user should know
+
+1. `VERIFIED` is a project workflow status, not universal mathematical certainty or human peer review.
+2. Numerical agreement is evidence, not proof—even after a very large computation.
+3. Failure to find a counterexample is not a proof. Use `PROPOSED`, `UNCERTAIN`, and `OPEN GAP` honestly.
+4. Research state lives in the project files. Back up the whole folder, and do not upload private research to a public repository.
+
+## Beginner file map
+
+| Location | Purpose |
+| --- | --- |
+| `state/problem.md` | Current research question and exact target |
+| `state/assumptions.md` | Assumptions, restrictions, and consistency concerns |
+| `state/notation.md` | Symbols, domains, and notation conventions |
+| `state/research_plan.md` | Steps, risks, stop conditions, and Definition of Done |
+| `state/STATUS.md` | Current progress summary |
+| `state/open_gaps.md` | Unresolved or unverified questions |
+| `state/dead_ends.md` | Failed routes preserved to prevent repeated work |
+| `state/fact_graph.jsonl` | Formal claims and dependencies |
+| `literature/`, `experiments/`, `paper/` | Sources, reproducible computations, and manuscript files |
+
+## Common problems
+
+- **The agent cannot find the project:** open the folder that directly contains `AGENTS.md`, `state/`, and `workflows/`, not the ZIP or a single file.
+- **The agent requests an API key or payment:** say, “Stay in local native mode. Do not enable external APIs or paid calls.”
+- **You see an unfamiliar error:** paste the complete error to the agent and ask it to diagnose and fix the project directly instead of only giving you commands.
+- **A claim is called proven:** ask for its fact ID, assumptions, proof artifact, independent verification report, and dependencies. Missing items mean it should remain `PROPOSED` or `UNCERTAIN`.
+- **Work exists only in chat:** ask the agent to run the session handoff workflow. Chat-only work is not durable project state.
+
 ## What is implemented
 
 - a fact DAG with cycle prevention and VERIFIED-only formal dependencies;
@@ -24,9 +102,9 @@ ProofWeave is a local, model-independent workspace for mathematical research, pa
 
 `VERIFIED` is a project workflow status. It is not human peer review or formal certainty. Lean support is optional and counts as machine-checked only after a pinned build with no disallowed `sorry`, `admit`, or unexpected axioms—and a human still checks that the formal statement matches the intended theorem.
 
-## Quick start
+## Optional command-line quick start
 
-Use Python 3.11 or newer from the repository root:
+New users may skip this section. Use Python 3.11 or newer from the repository root only when you want to run the deterministic tools yourself:
 
 ```powershell
 python -m mathlab init
