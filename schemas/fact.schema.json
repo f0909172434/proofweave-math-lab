@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofweave.local/schemas/fact.schema.json",
+  "title": "Truth-layer fact",
+  "type": "object",
+  "required": [
+    "fact_id", "title", "statement", "normalized_statement", "kind",
+    "assumptions", "quantifiers", "mathematical_domain", "proof",
+    "dependencies", "source_dependencies", "created_by", "checked_by",
+    "verification_status", "verification_report", "confidence", "tags",
+    "created_at", "verified_at", "supersedes", "revoked_reason",
+    "affected_descendants", "manuscript_locations",
+    "experiment_dependencies", "formalization_status", "status"
+  ],
+  "properties": {
+    "fact_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "statement": {"type": "string", "minLength": 1},
+    "normalized_statement": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["theorem", "lemma", "proposition", "corollary", "conjecture", "heuristic", "numerical_evidence", "empirical_observation", "refuted_claim", "open_gap", "unknown"]},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "quantifiers": {"type": "array", "items": {"type": "string"}},
+    "mathematical_domain": {"type": "string"},
+    "proof": {"type": "string"},
+    "dependencies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "source_dependencies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "created_by": {"type": "string"},
+    "checked_by": {"type": ["string", "null"]},
+    "verification_status": {"enum": ["DRAFT", "PROPOSED", "UNDER_REVIEW", "VERIFIED", "REJECTED", "UNCERTAIN", "REVOKED", "SUPERSEDED"]},
+    "status": {"enum": ["DRAFT", "PROPOSED", "UNDER_REVIEW", "VERIFIED", "REJECTED", "UNCERTAIN", "REVOKED", "SUPERSEDED"]},
+    "verification_report": {"type": ["object", "null"]},
+    "confidence": {
+      "type": "object",
+      "required": ["level", "reason"],
+      "properties": {"level": {"enum": ["low", "medium", "high"]}, "reason": {"type": "string"}}
+    },
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "created_at": {"type": "string", "format": "date-time"},
+    "verified_at": {"type": ["string", "null"], "format": "date-time"},
+    "supersedes": {"type": "array", "items": {"type": "string"}},
+    "revoked_reason": {"type": ["string", "null"]},
+    "affected_descendants": {"type": "array", "items": {"type": "string"}},
+    "manuscript_locations": {"type": "array", "items": {"type": "string"}},
+    "experiment_dependencies": {"type": "array", "items": {"type": "string"}},
+    "revocation_report": {
+      "type": "object",
+      "required": ["revoked_fact_id", "reason", "revoked_by", "revoked_at", "affected_facts", "manuscript_locations", "experiment_dependencies", "source_dependencies"],
+      "properties": {
+        "revoked_fact_id": {"type": "string"},
+        "reason": {"type": "string"},
+        "revoked_by": {"type": "string"},
+        "revoked_at": {"type": "string", "format": "date-time"},
+        "affected_facts": {"type": "array", "items": {"type": "string"}},
+        "manuscript_locations": {"type": "object"},
+        "experiment_dependencies": {"type": "object"},
+        "source_dependencies": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "formalization_status": {"enum": ["NOT_ATTEMPTED", "PLANNED", "PARTIAL", "COMPILED", "FAILED", "HAS_SORRY", "HAS_ADMIT", "UNKNOWN"]}
+  },
+  "additionalProperties": true
+}

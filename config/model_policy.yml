@@ -1,0 +1,12 @@
+inventory_is_authoritative: true
+automatic_availability:
+  - VERIFIED_AVAILABLE
+allow_configured_unverified: false
+exclude_publicly_listed: true
+exclude_deprecated_when_alternative_exists: true
+high_risk_minimum_tier: ADVANCED
+theorem_verifier_default_tier: FRONTIER
+require_different_verifier_family_when_available: true
+require_execution_profile: true
+unknown_fields: RECORD_UNKNOWN_DO_NOT_GUESS
+paid_probe_default: false

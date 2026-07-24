@@ -1,0 +1,1 @@
+{"case_id":"public-planning-001","dataset_version":"seed-v1","visibility":"PUBLIC","category":"research_planning","prompt":"Plan work on a universal nonlinear theorem with weak assumptions. Include proof, counterexample and toy-model paths with stop conditions.","expected":{"required_routes":["proof","counterexample","toy_model"],"requires_verifier":true}}

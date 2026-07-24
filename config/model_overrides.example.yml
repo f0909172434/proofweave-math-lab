@@ -1,0 +1,14 @@
+# Copy to model_overrides.yml (gitignored) only after reviewing the live inventory.
+preferred_providers: []
+forbidden_providers: []
+preferred_models: []
+forbidden_models: []
+requested_model: null
+maximum_reasoning_profile: MAXIMUM
+quality_mode: BALANCED
+allow_paid_probes: false
+allow_cross_provider_routing: false
+allow_cli_subprocess_agents: false
+require_confirmation_above_cost: null
+tasks_requiring_manual_approval: []
+private_data_provider_allowlist: []

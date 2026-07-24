@@ -1,0 +1,1 @@
+{"case_id":"public-sign-001","dataset_version":"seed-v1","visibility":"PUBLIC","category":"algebra_sign_audit","prompt":"Check whether -(a-b)^2 is nonnegative for all real a,b.","expected":{"decision":"FALSE","counterexample":"a=1,b=0"}}

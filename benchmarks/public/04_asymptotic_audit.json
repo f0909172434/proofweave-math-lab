@@ -1,0 +1,1 @@
+{"case_id":"public-asymptotic-001","dataset_version":"seed-v1","visibility":"PUBLIC","category":"asymptotic_audit","prompt":"Audit the inference f(x)=x+o(x) as x to 0, therefore f'(x)=1+o(1), without further assumptions.","expected":{"decision":"REJECT","gap_contains":"C0 asymptotic cannot be differentiated"}}

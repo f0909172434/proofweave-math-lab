@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofweave.local/schemas/project_state.schema.json",
+  "title": "Session handoff project state",
+  "type": "object",
+  "required": ["current_objective", "verified_results", "proposed_results", "refuted_claims", "active_workers", "blocking_gaps", "failed_approaches", "latest_experiments", "next_recommended_action", "additional_model_usage_justified", "current_execution_mode", "verified_available_models", "configured_unverified_models", "disabled_models", "budget_mode", "recent_routing_decisions", "escalations", "downgrades", "tasks_lacking_independent_verification", "updated_at"],
+  "properties": {
+    "current_objective": {"type": "string"},
+    "verified_results": {"type": "array"},
+    "proposed_results": {"type": "array"},
+    "refuted_claims": {"type": "array"},
+    "active_workers": {"type": "array"},
+    "blocking_gaps": {"type": "array"},
+    "failed_approaches": {"type": "array"},
+    "latest_experiments": {"type": "array"},
+    "next_recommended_action": {"type": "string"},
+    "additional_model_usage_justified": {"type": "string"},
+    "current_execution_mode": {"type": "string"},
+    "verified_available_models": {"type": "array"},
+    "configured_unverified_models": {"type": "array"},
+    "disabled_models": {"type": "array"},
+    "budget_mode": {"enum": ["ECONOMY", "BALANCED", "QUALITY_FIRST", "MANUAL"]},
+    "recent_routing_decisions": {"type": "array"},
+    "escalations": {"type": "array"},
+    "downgrades": {"type": "array"},
+    "tasks_lacking_independent_verification": {"type": "array"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

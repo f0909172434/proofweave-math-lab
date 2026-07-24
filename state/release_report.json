@@ -1,0 +1,137 @@
+{
+  "checks": [
+    {
+      "artifact": null,
+      "check_id": "structure",
+      "message": "Required project structure is present",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "schemas",
+      "message": "All schema files parse and declare draft 2020-12",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "fact-graph",
+      "message": "Fact graph invariants hold",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "source-registry",
+      "message": "Source registry records are valid",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "issue-ledger",
+      "message": "Issue ledger records are valid",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "claim-map",
+      "message": "0 formal claims map to matching VERIFIED formal facts with current paper-math statement bindings",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "bibliography",
+      "message": "0 cited keys are defined and registered",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "experiments",
+      "message": "1 experiment configs are reproducible",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "secret-scan",
+      "message": "No credential material detected",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "open-blocking-issue",
+      "message": "No OPEN/IN_PROGRESS FATAL or MAJOR issues",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "runtime-policy",
+      "message": "Paid and external execution paths remain disabled",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "persistent-schemas",
+      "message": "Persistent structured records satisfy their schemas",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "unit-tests",
+      "message": "----------------------------------------------------------------------\nRan 71 tests in 0.802s\n\nOK",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "paper-compile",
+      "message": "{\"status\": \"PASS\", \"returncodes\": [0, 0], \"pdf\": \"C:\\\\Users\\\\user\\\\OneDrive\\\\Desktop\\\\分歧圖形狀研究\\\\paper\\\\main.pdf\"}",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "release-snapshot",
+      "message": "Candidate snapshot 1019f461bd50574424915ad16c8a504f9067beebcd038c8088f493ba09e883f9 covers 342 files (unborn/uncommitted Git repository)",
+      "severity": "ERROR",
+      "status": "PASS"
+    },
+    {
+      "artifact": null,
+      "check_id": "release-vcs",
+      "message": "No clean Git commit identifies this snapshot; the content-addressed manifest is the release baseline.",
+      "severity": "WARNING",
+      "status": "WARN"
+    },
+    {
+      "artifact": null,
+      "check_id": "model-inventory",
+      "message": "Execution mode: MODE_A_NATIVE_MULTI_MODEL",
+      "severity": "ERROR",
+      "status": "PASS"
+    }
+  ],
+  "failures": 0,
+  "limitations": [
+    "AI verification and deterministic gates can miss mathematical errors; VERIFIED is a workflow status, not formal proof or peer review.",
+    "A human expert must review core theorems and statement faithfulness; numerical agreement is evidence, not proof."
+  ],
+  "snapshot": {
+    "file_count": 342,
+    "git_dirty": true,
+    "git_head": null,
+    "manifest": "state/release_manifest.json",
+    "snapshot_id": "1019f461bd50574424915ad16c8a504f9067beebcd038c8088f493ba09e883f9"
+  },
+  "status": "PASS",
+  "warnings": 1
+}

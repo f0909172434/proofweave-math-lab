@@ -1,0 +1,20 @@
+experiment_id: harness-smoke-test
+question: Does the local experiment harness execute a recorded standard-library command successfully?
+status: COMPLETE
+config_path: experiments/configs/sample_experiment.yml
+script_path: experiments/scripts/sample_experiment.py
+report_path: experiments/reports/sample_report.md
+environment: {"python": ">=3.11", "dependencies": []}
+parameters: {}
+seed: null
+tolerances: {}
+initial_conditions: []
+grid_refinements: []
+alternative_solvers: []
+raw_data_paths: []
+output_paths: []
+reproduction_command: python experiments/scripts/sample_experiment.py --config experiments/configs/sample_experiment.yml
+result_summary: The command validates its config path and exits successfully without numerical claims.
+limitations: ["Harness smoke test only", "This is not mathematical evidence"]
+created_at: 2026-07-24T00:00:00+08:00
+completed_at: 2026-07-24T00:00:00+08:00

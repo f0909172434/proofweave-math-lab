@@ -1,0 +1,17 @@
+mode: BALANCED
+currency: USD
+per_task_budget: null
+per_workflow_budget: null
+daily_budget: null
+monthly_budget: null
+maximum_parallel_agents: 4
+maximum_frontier_calls: 8
+maximum_reasoning_escalations: 2
+maximum_model_escalations: 2
+maximum_provider_switches: 1
+maximum_repair_loops: 3
+maximum_paid_probes: 0
+unknown_cost_action: ALLOW_ONLY_WITH_BOUNDED_CALL_LIMITS
+budget_exhausted_status:
+  - BLOCKED_BY_BUDGET
+  - NEEDS_HUMAN_DECISION

@@ -1,0 +1,23 @@
+{
+  "allow_api_routing": false,
+  "allow_cli_subprocess_agents": false,
+  "allow_configured_unverified": false,
+  "allow_cross_provider_routing": false,
+  "allow_gateway_routing": false,
+  "allow_paid_probes": false,
+  "forbidden_models": [],
+  "forbidden_providers": [],
+  "maximum_reasoning_profile": "MAXIMUM",
+  "preferred_models": [],
+  "preferred_providers": [],
+  "private_data_provider_allowlist": [],
+  "quality_mode": "BALANCED",
+  "require_confirmation_above_cost": null,
+  "tasks_requiring_manual_approval": [
+    "external_model_execution",
+    "paid_probe",
+    "publish_or_push",
+    "upload_or_email"
+  ]
+}
+

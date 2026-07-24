@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofweave.local/schemas/verification.schema.json",
+  "title": "Independent theorem verification report",
+  "type": "object",
+  "required": ["verification_id", "fact_id", "outcome", "verifier", "verifier_role", "cold_start", "dependencies_checked", "checklist", "created_at"],
+  "properties": {
+    "verification_id": {"type": "string", "minLength": 1},
+    "fact_id": {"type": "string", "minLength": 1},
+    "outcome": {"enum": ["ACCEPT", "REJECT", "UNCERTAIN"]},
+    "verifier": {"type": "string", "minLength": 1},
+    "verifier_role": {"const": "theorem_verifier"},
+    "cold_start": {"const": true},
+    "dependencies_checked": {"type": "array", "items": {"type": "string"}},
+    "sources_checked": {"type": "array", "items": {"type": "string"}},
+    "checklist": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["item", "result"], "properties": {"item": {"type": "string"}, "result": {"enum": ["PASS", "FAIL", "UNCERTAIN"]}, "note": {"type": "string"}}}},
+    "fatal_gap": {"type": ["string", "null"]},
+    "repair_direction": {"type": ["string", "null"]},
+    "missing_information": {"type": "array", "items": {"type": "string"}},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

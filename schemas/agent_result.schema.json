@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofweave.local/schemas/agent_result.schema.json",
+  "title": "Canonical agent result",
+  "type": "object",
+  "required": ["task_id", "agent", "status", "summary", "inputs_used", "facts_used", "sources_used", "claims_proposed", "claims_refuted", "gaps_found", "assumptions_added", "artifacts_created", "verification_required", "confidence", "execution_profile", "next_actions", "stop_reason"],
+  "properties": {
+    "task_id": {"type": "string"},
+    "agent": {"type": "string"},
+    "status": {"enum": ["completed", "blocked", "failed", "needs_review"]},
+    "summary": {"type": "string"},
+    "inputs_used": {"type": "array"},
+    "facts_used": {"type": "array", "items": {"type": "string"}},
+    "sources_used": {"type": "array", "items": {"type": "string"}},
+    "claims_proposed": {"type": "array"},
+    "claims_refuted": {"type": "array"},
+    "gaps_found": {"type": "array"},
+    "assumptions_added": {"type": "array"},
+    "artifacts_created": {"type": "array", "items": {"type": "string"}},
+    "verification_required": {"type": "array"},
+    "confidence": {"type": "object", "required": ["level", "reason"], "properties": {"level": {"enum": ["low", "medium", "high"]}, "reason": {"type": "string"}}},
+    "execution_profile": {
+      "type": "object",
+      "required": ["provider", "model_id", "model_alias", "model_snapshot", "capability_tier", "requested_reasoning_profile", "effective_reasoning_setting", "reasoning_control_method", "routing_id", "routing_reason", "fallback_used", "independence_score", "estimated_cost", "actual_cost", "latency_ms", "model_inventory_version", "prompt_version"],
+      "properties": {
+        "provider": {"type": ["string", "null"]},
+        "model_id": {"type": ["string", "null"]},
+        "model_alias": {"type": ["string", "null"]},
+        "model_snapshot": {"type": ["string", "null"]},
+        "capability_tier": {"type": ["string", "null"]},
+        "requested_reasoning_profile": {"type": ["string", "null"]},
+        "effective_reasoning_setting": {"type": ["string", "null"]},
+        "reasoning_control_method": {"enum": ["NATIVE", "PROMPT_OR_LOOP_BASED", "HOST_UNSUPPORTED"]},
+        "routing_id": {"type": ["string", "null"]},
+        "routing_reason": {"type": "string"},
+        "fallback_used": {"type": "boolean"},
+        "independence_score": {"type": "number", "minimum": 0},
+        "estimated_cost": {"type": ["number", "null"]},
+        "actual_cost": {"type": ["number", "null"]},
+        "latency_ms": {"type": ["number", "null"]},
+        "model_inventory_version": {"type": ["string", "null"]},
+        "prompt_version": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "next_actions": {"type": "array"},
+    "stop_reason": {"type": "string"}
+  },
+  "additionalProperties": false
+}

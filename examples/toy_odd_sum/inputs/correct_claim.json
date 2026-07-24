@@ -1,0 +1,15 @@
+{
+  "fact_id": "toy-odd-sum",
+  "title": "Sum of the first n positive odd integers",
+  "statement": "For every integer n >= 0, with the empty sum defined as 0, sum_{k=1}^n (2k-1) = n^2.",
+  "normalized_statement": "forall n in Z, n>=0 => sum(k=1..n,2k-1)=n^2; empty_sum=0",
+  "kind": "theorem",
+  "assumptions": ["n is an integer", "n >= 0", "the empty sum is 0"],
+  "quantifiers": ["for every integer n >= 0"],
+  "mathematical_domain": "elementary number theory",
+  "proof": "Induct on n. For n=0, both sides are 0. Assume sum_{k=1}^n(2k-1)=n^2. Then sum_{k=1}^{n+1}(2k-1)=n^2+(2(n+1)-1)=n^2+2n+1=(n+1)^2. Thus the result holds for every integer n>=0.",
+  "dependencies": [],
+  "source_dependencies": [],
+  "created_by": "toy-proof-worker",
+  "status": "PROPOSED"
+}

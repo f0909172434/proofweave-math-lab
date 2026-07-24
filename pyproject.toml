@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "proofweave-math-lab"
+version = "0.1.0"
+description = "ProofWeave: model-independent, auditable mathematics research infrastructure"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "ProofWeave contributors"}]
+dependencies = []
+
+[project.scripts]
+mathlab = "mathlab.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["mathlab*"]
+
+[tool.unittest]
+start-directory = "tests"

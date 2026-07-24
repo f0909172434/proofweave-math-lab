@@ -1,0 +1,10 @@
+claims:
+  - latex_label: thm:odd-sum
+    fact_id: toy-odd-sum
+    graph_snapshot: toy-run
+    evidence_class: theorem
+    latex_statement_sha256: 6dc27129e85019b0ed60a246fb163ed165e941c3849a357bb3c2c5258c7db5a6
+    fact_statement_sha256: 05ef71a7c1249ce9eae6186bff9ee0d21f68aa30d6ea6ee42c3519fa0d37b5a7
+    statement_match_verifier_role: paper_math_verifier
+    statement_match_verified_by: toy-paper-math-verifier
+    statement_match_verified_at: 2026-07-24T00:00:00+08:00

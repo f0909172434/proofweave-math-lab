@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofweave.local/schemas/review_issue.schema.json",
+  "title": "Review and revision issue",
+  "type": "object",
+  "required": ["issue_id", "severity", "status", "location", "affected_claims", "explanation", "failed_step", "required_fix", "verification_after_fix"],
+  "properties": {
+    "issue_id": {"type": "string", "minLength": 1},
+    "severity": {"enum": ["FATAL", "MAJOR", "MINOR", "STRENGTH"]},
+    "status": {"enum": ["OPEN", "IN_PROGRESS", "FIXED", "REJECTED", "DEFERRED"]},
+    "location": {"type": "string"},
+    "affected_claims": {"type": "array", "items": {"type": "string"}},
+    "explanation": {"type": "string"},
+    "failed_step": {"type": "string"},
+    "counterexample": {"type": ["string", "null"]},
+    "required_fix": {"type": "string"},
+    "verification_after_fix": {"type": "string"},
+    "fix_artifacts": {"type": "array", "items": {"type": "string"}},
+    "modified_files": {"type": "array", "items": {"type": "string"}},
+    "rerun_experiments": {"type": "array", "items": {"type": "string"}},
+    "reverify_sections": {"type": "array", "items": {"type": "string"}},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,1 @@
+{"case_id":"public-counterexample-001","dataset_version":"seed-v1","visibility":"PUBLIC","category":"counterexample_validation","prompt":"Claim: every continuous f on R with f(0)=0 is differentiable at 0. Validate f(x)=|x| as a candidate counterexample, including assumptions.","expected":{"decision":"VALID_COUNTEREXAMPLE"}}

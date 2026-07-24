@@ -1,0 +1,1 @@
+{"case_id":"public-citation-001","dataset_version":"seed-v1","visibility":"PUBLIC","category":"citation_entailment","prompt":"A source proves a result for compact manifolds. The manuscript cites it for arbitrary complete noncompact manifolds. Classify support.","expected":{"decision":"NOT_ENTAILED"}}

@@ -1,0 +1,4 @@
+claims: []
+# Each manuscript claim must include the fact id, current LaTeX-body SHA-256,
+# current normalized-fact-statement SHA-256, and an independent
+# paper_math_verifier identity plus timezone-aware verification timestamp.

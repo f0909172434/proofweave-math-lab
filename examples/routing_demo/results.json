@@ -1,0 +1,85 @@
+{
+  "model_inventory_version": "e44dab549bbbf117",
+  "paid_calls": 0,
+  "results": [
+    {
+      "complexity": 12,
+      "effective_reasoning": "low",
+      "reasoning_profile": "LOW",
+      "recommended_tier": "UTILITY",
+      "risk": 8,
+      "routing_reason": "Highest deterministic score after availability, tool, context, risk and policy filters; cost UNKNOWN; bounded call limits still apply.",
+      "selected_model": "gpt-5.6-terra",
+      "selected_tier": "ADVANCED",
+      "status": "RECOMMENDED",
+      "task": "01_markdown_heading.md",
+      "task_type": "formatting"
+    },
+    {
+      "complexity": 28,
+      "effective_reasoning": "low",
+      "reasoning_profile": "LOW",
+      "recommended_tier": "STANDARD",
+      "risk": 25,
+      "routing_reason": "Highest deterministic score after availability, tool, context, risk and policy filters; cost UNKNOWN; bounded call limits still apply.",
+      "selected_model": "gpt-5.6-terra",
+      "selected_tier": "ADVANCED",
+      "status": "RECOMMENDED",
+      "task": "02_doi_lookup.md",
+      "task_type": "doi_lookup"
+    },
+    {
+      "complexity": 48,
+      "effective_reasoning": "high",
+      "reasoning_profile": "HIGH",
+      "recommended_tier": "ADVANCED",
+      "risk": 60,
+      "routing_reason": "Highest deterministic score after availability, tool, context, risk and policy filters; cost UNKNOWN; bounded call limits still apply.",
+      "selected_model": "gpt-5.6-terra",
+      "selected_tier": "ADVANCED",
+      "status": "RECOMMENDED",
+      "task": "03_local_algebra.md",
+      "task_type": "local_algebra"
+    },
+    {
+      "complexity": 72,
+      "effective_reasoning": "xhigh",
+      "reasoning_profile": "VERY_HIGH",
+      "recommended_tier": "FRONTIER",
+      "risk": 86,
+      "routing_reason": "Highest deterministic score after availability, tool, context, risk and policy filters; cost UNKNOWN; bounded call limits still apply.",
+      "selected_model": "gpt-5.6-sol",
+      "selected_tier": "FRONTIER",
+      "status": "RECOMMENDED",
+      "task": "04_asymptotic_derivative.md",
+      "task_type": "asymptotics_audit"
+    },
+    {
+      "complexity": 78,
+      "effective_reasoning": "high",
+      "reasoning_profile": "HIGH",
+      "recommended_tier": "FRONTIER",
+      "risk": 99,
+      "routing_reason": "Highest deterministic score after availability, tool, context, risk and policy filters; cost UNKNOWN; bounded call limits still apply.",
+      "selected_model": "gpt-5.6-sol",
+      "selected_tier": "FRONTIER",
+      "status": "RECOMMENDED",
+      "task": "05_main_theorem_counterexample.md",
+      "task_type": "counterexample_search"
+    },
+    {
+      "complexity": 88,
+      "effective_reasoning": "xhigh",
+      "reasoning_profile": "VERY_HIGH",
+      "recommended_tier": "FRONTIER",
+      "risk": 100,
+      "routing_reason": "Highest deterministic score after availability, tool, context, risk and policy filters; cost UNKNOWN; bounded call limits still apply.",
+      "selected_model": "gpt-5.6-sol",
+      "selected_tier": "FRONTIER",
+      "status": "RECOMMENDED",
+      "task": "06_full_referee_review.md",
+      "task_type": "referee_review"
+    }
+  ],
+  "status": "PASS"
+}

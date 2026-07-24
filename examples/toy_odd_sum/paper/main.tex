@@ -1,0 +1,22 @@
+\documentclass{article}
+\usepackage{amsmath,amsthm}
+\newtheorem{theorem}{Theorem}
+\title{A Toy Verified Claim}
+\author{ProofWeave demonstration}
+\begin{document}
+\maketitle
+\begin{theorem}\label{thm:odd-sum}
+For every integer $n\geq 0$, with the empty sum defined as zero,
+\[
+  \sum_{k=1}^{n}(2k-1)=n^2.
+\]
+\end{theorem}
+\begin{proof}
+For $n=0$, both sides are zero. Suppose the identity holds for an integer
+$n\geq0$. Then
+\[
+ \sum_{k=1}^{n+1}(2k-1)=n^2+(2n+1)=(n+1)^2.
+\]
+The result follows by induction.
+\end{proof}
+\end{document}

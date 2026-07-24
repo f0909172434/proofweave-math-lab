@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofweave.local/schemas/experiment.schema.json",
+  "title": "Reproducible computation experiment",
+  "type": "object",
+  "required": ["experiment_id", "question", "status", "config_path", "script_path", "report_path", "environment", "parameters", "raw_data_paths", "output_paths", "reproduction_command", "limitations", "created_at"],
+  "properties": {
+    "experiment_id": {"type": "string", "minLength": 1},
+    "question": {"type": "string", "minLength": 1},
+    "status": {"enum": ["PLANNED", "RUNNING", "COMPLETE", "FAILED", "INCONCLUSIVE"]},
+    "config_path": {"type": "string"},
+    "script_path": {"type": "string"},
+    "report_path": {"type": "string"},
+    "environment": {"type": "object"},
+    "parameters": {"type": "object"},
+    "seed": {"type": ["integer", "null"]},
+    "tolerances": {"type": "object"},
+    "initial_conditions": {"type": "array"},
+    "grid_refinements": {"type": "array"},
+    "alternative_solvers": {"type": "array"},
+    "raw_data_paths": {"type": "array", "items": {"type": "string"}},
+    "output_paths": {"type": "array", "items": {"type": "string"}},
+    "reproduction_command": {"type": "string", "minLength": 1},
+    "result_summary": {"type": "string"},
+    "limitations": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "created_at": {"type": "string", "format": "date-time"},
+    "completed_at": {"type": ["string", "null"], "format": "date-time"}
+  },
+  "additionalProperties": false
+}

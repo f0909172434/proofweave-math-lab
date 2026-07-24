@@ -1,0 +1,1 @@
+{"case_id":"public-numerical-001","dataset_version":"seed-v1","visibility":"PUBLIC","category":"numerical_methodology","prompt":"A sign claim is based on one grid, one tolerance and one solver. Identify the evidence status and minimum missing sensitivity checks.","expected":{"decision":"NUMERICAL_EVIDENCE_ONLY"}}

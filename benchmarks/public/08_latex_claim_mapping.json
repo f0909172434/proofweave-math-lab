@@ -1,0 +1,1 @@
+{"case_id":"public-claim-map-001","dataset_version":"seed-v1","visibility":"PUBLIC","category":"latex_claim_mapping","prompt":"A LaTeX theorem has label thm:main but claim_map is empty. Should release pass?","expected":{"decision":"FAIL_RELEASE"}}
