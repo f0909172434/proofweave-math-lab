@@ -8,84 +8,6 @@
 
 ProofWeave is a local, model-independent workspace for mathematical research, paper writing, and adversarial review. Its core is persistent files and deterministic gates—not chat history. It separates proofs, literature results, numerical evidence, conjectures, and open gaps, and records every model-routing decision without treating model agreement as truth.
 
-## What ProofWeave can do
-
-ProofWeave is not a black box that guarantees a correct proof from a prompt. It is auditable research infrastructure for structured collaboration between human researchers and AI agents.
-
-| Research task | Support provided | Main artifact |
-| --- | --- | --- |
-| Problem formalization | Makes domains, quantifiers, assumptions, notation, boundary conditions, and completion criteria explicit | Intake files under `state/` |
-| Literature review | Separates search leads, opened originals, and verified claim-level support | Source registry and `literature/` |
-| Strategy generation | Develops genuinely different proof, obstruction, toy-model, and computational routes | Research plan and worker artifacts |
-| Proof search | Decomposes problems into local claims and records dependencies, attempts, gaps, and repairs | `PROPOSED` claim packets |
-| Counterexample search | Tests endpoints, degeneracies, small dimensions, and parameter limits first | Counterexamples, refutations, or bounded-search reports |
-| Independent verification | Uses a cold-start verifier and a programmatic promotion gate | `ACCEPT`, `REJECT`, or `UNCERTAIN` reports |
-| Reproducible experiments | Preserves configuration, environment, code, raw data, output, error analysis, and reproduction commands | Complete packages under `experiments/` |
-| Formalization planning | Supports Lean feasibility and build records without claiming machine verification prematurely | Formalization plans or build artifacts |
-| Paper writing and review | Writes from a frozen verified graph, maps LaTeX claims to facts, and audits global consistency | `paper/`, claim map, and issue ledger |
-| Model and budget routing | Detects host capabilities and recommends auditable routes based on risk, tools, independence, and cost | Inventory, routing log, and budget state |
-| Release validation | Checks structure, schemas, facts, sources, experiments, paper bindings, tests, secrets, and builds | Release report and content-hash snapshot |
-
-## How it works
-
-```mermaid
-flowchart LR
-    U["Research question"] --> I["Intake and formalization"]
-    I --> S["Persistent state under state/"]
-    S --> W["Canonical agents and workflows"]
-    W --> E["Proof, source, counterexample, and experiment evidence"]
-    E --> V["Cold-start independent verification"]
-    V -->|"ACCEPT"| G["VERIFIED fact DAG"]
-    V -->|"REJECT / UNCERTAIN"| O["Gaps, repairs, and failed routes"]
-    G --> P["Paper and downstream research"]
-    O --> S
-    P --> R["Release gates"]
-    R --> M["Report + SHA-256 content snapshot"]
-```
-
-Chat output is not the truth layer. Research state must be written to files, and a formal claim can become a dependency only after independent verification and deterministic consistency checks.
-
-### Claim lifecycle
-
-```mermaid
-stateDiagram-v2
-    [*] --> DRAFT
-    DRAFT --> PROPOSED
-    PROPOSED --> UNDER_REVIEW
-    UNDER_REVIEW --> VERIFIED: independent ACCEPT
-    UNDER_REVIEW --> REJECTED: decisive flaw
-    UNDER_REVIEW --> UNCERTAIN: missing evidence
-    VERIFIED --> REVOKED: later error or invalid dependency
-    VERIFIED --> SUPERSEDED: replaced by a newer fact
-```
-
-The author cannot verify the same claim. Only an independent `theorem_verifier` can promote it. Formal dependencies must be `VERIFIED` and acyclic. Revocation audits every transitive descendant and affected paper or experiment location.
-
-## Core technical design
-
-| Component | Implementation and purpose |
-| --- | --- |
-| Runtime | Python 3.11+; the core runtime uses only the standard library |
-| Persistent data | Human-readable Markdown, JSON, JSONL, YAML, and LaTeX files |
-| Validation | 12 JSON Schema Draft 2020-12 schemas for facts, sources, experiments, models, routing, and reviews |
-| Truth layer | Cycle-safe fact DAG with VERIFIED-only dependencies and transitive revocation |
-| Source layer | `FOUND → OPENED → VERIFIED` states with exact supported claims and reviewer identity |
-| Agent layer | 28 canonical roles, 18 workflows, 14 prompts, and generated Codex/Claude adapters |
-| Routing | MODE A–E capability classification with availability, privacy, tool, independence, and cost filters |
-| Experiment gate | Validates config, scripts, reports, artifact paths, and executable reproduction commands |
-| Paper gate | Binds LaTeX claims to current verified facts using statement hashes and independent attestations |
-| Release gate | Runs 72 automated tests plus structure, schema, graph, source, experiment, paper, secret, and optional PDF checks |
-| Reproducibility | Produces a per-file hash manifest and SHA-256 snapshot ID for each successful release |
-| Optional tooling | Supports `pdflatex` and Lean when available; missing tools are never reported as executed |
-
-## Capability boundaries
-
-- Workflow enforcement reduces risk but cannot guarantee that AI or humans made no mathematical error.
-- `VERIFIED` is a project status, not journal peer review, formal proof, or absolute truth.
-- Literature search depends on available browsing or database tools; search snippets are not verified sources.
-- Lean, LaTeX, external models, and paid APIs are optional. Detection is not authorization.
-- Routing selects policy-compliant execution; reputation, voting, and confidence never replace proof.
-
 ## Start here: no coding experience required
 
 You do not need to know Python, Git, JSON, LaTeX, or the command line. The easiest path is to open the entire project folder in an AI agent that can work with local files, then describe your mathematical question in ordinary language.
@@ -163,6 +85,84 @@ Answer the agent's questions. “I don't know” is a valid answer: the uncertai
 - **You see an unfamiliar error:** paste the complete error to the agent and ask it to diagnose and fix the project directly instead of only giving you commands.
 - **A claim is called proven:** ask for its fact ID, assumptions, proof artifact, independent verification report, and dependencies. Missing items mean it should remain `PROPOSED` or `UNCERTAIN`.
 - **Work exists only in chat:** ask the agent to run the session handoff workflow. Chat-only work is not durable project state.
+
+## What ProofWeave can do
+
+ProofWeave is not a black box that guarantees a correct proof from a prompt. It is auditable research infrastructure for structured collaboration between human researchers and AI agents.
+
+| Research task | Support provided | Main artifact |
+| --- | --- | --- |
+| Problem formalization | Makes domains, quantifiers, assumptions, notation, boundary conditions, and completion criteria explicit | Intake files under `state/` |
+| Literature review | Separates search leads, opened originals, and verified claim-level support | Source registry and `literature/` |
+| Strategy generation | Develops genuinely different proof, obstruction, toy-model, and computational routes | Research plan and worker artifacts |
+| Proof search | Decomposes problems into local claims and records dependencies, attempts, gaps, and repairs | `PROPOSED` claim packets |
+| Counterexample search | Tests endpoints, degeneracies, small dimensions, and parameter limits first | Counterexamples, refutations, or bounded-search reports |
+| Independent verification | Uses a cold-start verifier and a programmatic promotion gate | `ACCEPT`, `REJECT`, or `UNCERTAIN` reports |
+| Reproducible experiments | Preserves configuration, environment, code, raw data, output, error analysis, and reproduction commands | Complete packages under `experiments/` |
+| Formalization planning | Supports Lean feasibility and build records without claiming machine verification prematurely | Formalization plans or build artifacts |
+| Paper writing and review | Writes from a frozen verified graph, maps LaTeX claims to facts, and audits global consistency | `paper/`, claim map, and issue ledger |
+| Model and budget routing | Detects host capabilities and recommends auditable routes based on risk, tools, independence, and cost | Inventory, routing log, and budget state |
+| Release validation | Checks structure, schemas, facts, sources, experiments, paper bindings, tests, secrets, and builds | Release report and content-hash snapshot |
+
+## How it works
+
+```mermaid
+flowchart LR
+    U["Research question"] --> I["Intake and formalization"]
+    I --> S["Persistent state under state/"]
+    S --> W["Canonical agents and workflows"]
+    W --> E["Proof, source, counterexample, and experiment evidence"]
+    E --> V["Cold-start independent verification"]
+    V -->|"ACCEPT"| G["VERIFIED fact DAG"]
+    V -->|"REJECT / UNCERTAIN"| O["Gaps, repairs, and failed routes"]
+    G --> P["Paper and downstream research"]
+    O --> S
+    P --> R["Release gates"]
+    R --> M["Report + SHA-256 content snapshot"]
+```
+
+Chat output is not the truth layer. Research state must be written to files, and a formal claim can become a dependency only after independent verification and deterministic consistency checks.
+
+### Claim lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> DRAFT
+    DRAFT --> PROPOSED
+    PROPOSED --> UNDER_REVIEW
+    UNDER_REVIEW --> VERIFIED: independent ACCEPT
+    UNDER_REVIEW --> REJECTED: decisive flaw
+    UNDER_REVIEW --> UNCERTAIN: missing evidence
+    VERIFIED --> REVOKED: later error or invalid dependency
+    VERIFIED --> SUPERSEDED: replaced by a newer fact
+```
+
+The author cannot verify the same claim. Only an independent `theorem_verifier` can promote it. Formal dependencies must be `VERIFIED` and acyclic. Revocation audits every transitive descendant and affected paper or experiment location.
+
+## Core technical design
+
+| Component | Implementation and purpose |
+| --- | --- |
+| Runtime | Python 3.11+; the core runtime uses only the standard library |
+| Persistent data | Human-readable Markdown, JSON, JSONL, YAML, and LaTeX files |
+| Validation | 12 JSON Schema Draft 2020-12 schemas for facts, sources, experiments, models, routing, and reviews |
+| Truth layer | Cycle-safe fact DAG with VERIFIED-only dependencies and transitive revocation |
+| Source layer | `FOUND → OPENED → VERIFIED` states with exact supported claims and reviewer identity |
+| Agent layer | 28 canonical roles, 18 workflows, 14 prompts, and generated Codex/Claude adapters |
+| Routing | MODE A–E capability classification with availability, privacy, tool, independence, and cost filters |
+| Experiment gate | Validates config, scripts, reports, artifact paths, and executable reproduction commands |
+| Paper gate | Binds LaTeX claims to current verified facts using statement hashes and independent attestations |
+| Release gate | Runs 72 automated tests plus structure, schema, graph, source, experiment, paper, secret, and optional PDF checks |
+| Reproducibility | Produces a per-file hash manifest and SHA-256 snapshot ID for each successful release |
+| Optional tooling | Supports `pdflatex` and Lean when available; missing tools are never reported as executed |
+
+## Capability boundaries
+
+- Workflow enforcement reduces risk but cannot guarantee that AI or humans made no mathematical error.
+- `VERIFIED` is a project status, not journal peer review, formal proof, or absolute truth.
+- Literature search depends on available browsing or database tools; search snippets are not verified sources.
+- Lean, LaTeX, external models, and paid APIs are optional. Detection is not authorization.
+- Routing selects policy-compliant execution; reputation, voting, and confidence never replace proof.
 
 ## What is implemented
 
