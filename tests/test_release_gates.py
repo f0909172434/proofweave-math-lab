@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -31,6 +32,42 @@ class ReleaseGateTests(unittest.TestCase):
             (root / "delivered.pdf").write_bytes(b"pdf-version-two")
             pdf_second = build_release_manifest(root)
             self.assertNotEqual(pdf_first["snapshot_id"], pdf_second["snapshot_id"])
+
+    def test_release_metadata_does_not_mark_content_snapshot_dirty(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "state").mkdir(parents=True)
+            (root / "artifact.txt").write_text("research content\n", encoding="utf-8")
+            (root / "state" / "release_manifest.json").write_text("{}\n", encoding="utf-8")
+            (root / "state" / "release_report.json").write_text("{}\n", encoding="utf-8")
+            subprocess.run(["git", "init"], cwd=root, check=True, capture_output=True)
+            subprocess.run(
+                ["git", "config", "user.name", "ProofWeave Test"],
+                cwd=root,
+                check=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "config", "user.email", "test@example.invalid"],
+                cwd=root,
+                check=True,
+                capture_output=True,
+            )
+            subprocess.run(["git", "add", "."], cwd=root, check=True, capture_output=True)
+            subprocess.run(
+                ["git", "commit", "-m", "baseline"],
+                cwd=root,
+                check=True,
+                capture_output=True,
+            )
+
+            (root / "state" / "release_report.json").write_text(
+                '{"updated": true}\n', encoding="utf-8"
+            )
+            self.assertFalse(build_release_manifest(root)["git_dirty"])
+
+            (root / "artifact.txt").write_text("changed research content\n", encoding="utf-8")
+            self.assertTrue(build_release_manifest(root)["git_dirty"])
 
     def test_release_gate_rejects_open_fatal_and_unreviewed_live_policy(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

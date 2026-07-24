@@ -816,7 +816,20 @@ def build_release_manifest(root: Path) -> dict[str, Any]:
         )
         head = head_result.stdout.strip() if head_result.returncode == 0 else None
         status_result = subprocess.run(
-            ["git", "status", "--porcelain"], cwd=root, capture_output=True, text=True, timeout=5, check=False
+            [
+                "git",
+                "status",
+                "--porcelain",
+                "--",
+                ".",
+                ":(exclude)state/release_manifest.json",
+                ":(exclude)state/release_report.json",
+            ],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
         )
         dirty = bool(status_result.stdout.strip()) if status_result.returncode == 0 else None
     except (OSError, subprocess.TimeoutExpired):
