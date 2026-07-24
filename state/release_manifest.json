@@ -1,6 +1,6 @@
 {
-  "created_at": "2026-07-24T08:48:52.756921Z",
-  "file_count": 342,
+  "created_at": "2026-07-24T09:01:47.933606Z",
+  "file_count": 345,
   "files": {
     ".agents/skills/audit-asymptotics/SKILL.md": "a67cd5fa3e1315474625d97fc3cad93f9310b6592b9626c822dc7c2ce6a4838f",
     ".agents/skills/budget-status/SKILL.md": "872a7f983a80c2db6f5a98fc49235a3efa25a1b070b75ac450d287831487dd5d",
@@ -108,7 +108,10 @@
     "AGENTS.md": "99c7b9b14b83e2ec212102fb741013c2c7b12a0cf2a66d5dda6616710218eb5b",
     "CLAUDE.md": "c09b5f0f421acea1a69ebffc67c3b1f3b5aff7247e9e7c2ada0275117d9dddfa",
     "LICENSE": "0523a4d5d9ffc906b6df5acd605c6cd24e585203a0979fc526383c844ae98355",
-    "README.md": "6fe7ab8430a7e5cf9485d46faa0cebca224cc9700de68819d0c4d92b326fe6a5",
+    "README.en.md": "9e73fecab16586134be30efc1f87aaa3dcc4843b91ecc3f2f66c29733704b766",
+    "README.ja.md": "a64edf7b8ce242a70cb03781e032d84c6f8cbae89e642900d03e5d5ac427a2bd",
+    "README.md": "a3109324da3439d5906219e077134dee8fd8604685d2adde95a5fe3d03ad062c",
+    "README.zh-CN.md": "da4d81ac2ae9426cd61fa1eef7a34c5418bb9caae694cbcf4e2b09496074792a",
     "agents/README.md": "9cf42c09bf5167fa4cd40b5004a9d577bb11ab6db6b28f76fc100503caeeb997",
     "agents/asymptotics_auditor.md": "42980bda91c747271deaa74e4acd760567f23dc166a21c5bad7032168cf1ef9e",
     "agents/budget_manager.md": "adcd944bf5e8535b46019b162455612f21726f4f6930fb2d51096bc89daf9ac5",
@@ -229,7 +232,7 @@
     "paper/appendices/.gitkeep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
     "paper/claim_map.yml": "3d4099c58cb6dd5bb2dc09ee398c7baef8e1ace84bfb9ef7d39cd650c4c5dc38",
     "paper/figures/.gitkeep": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
-    "paper/main.pdf": "b2ae84ddbacee973c09ada9179bce73b68a2afb85c43ec268acdcb1b350fd101",
+    "paper/main.pdf": "d2d5208891af0bb004af50dce6ef55d495b0c95ad4f6592fc1e48729bd5ca208",
     "paper/main.tex": "b7f1524d34b48c0aa40564fe2069bdcf4f8d22ceec6724025a63103c71ae9947",
     "paper/references.bib": "1326d8573090c6ff8ad6cd5f589a83191478be5c01b3b19e6ce5e4c4956e687f",
     "paper/sections/introduction.tex": "b83a44ed387454b91d4f716a0e0be3d120133a04b03895b352f95c05682af878",
@@ -346,7 +349,7 @@
     "workflows/17_model_benchmarking.md": "d96384459176b7d43d06fc948141afefbbbeff925b3212ca6aa3fc0234ae1fd8"
   },
   "git_dirty": false,
-  "git_head": "36af1bc7e40645cd278fe66338c9856f8d06502d",
+  "git_head": "515a0f1739918158c16da57fb47cc968e620e449",
   "note": "Content-addressed manifest includes PDFs and excludes only disposable auxiliary build files plus this manifest/report.",
-  "snapshot_id": "a0bae3074eca6070b3841bbf4827d14214934ff044d2b12fac6e7695743c87b8"
+  "snapshot_id": "c6cb293da3c90e7e3f88d664ac64ec4e8a8ef6fc2ca649b2a0477188b9caf8bd"
 }

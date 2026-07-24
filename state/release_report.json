@@ -87,7 +87,7 @@
     {
       "artifact": null,
       "check_id": "unit-tests",
-      "message": "----------------------------------------------------------------------\nRan 72 tests in 1.236s\n\nOK",
+      "message": "----------------------------------------------------------------------\nRan 72 tests in 1.195s\n\nOK",
       "severity": "ERROR",
       "status": "PASS"
     },
@@ -101,7 +101,7 @@
     {
       "artifact": null,
       "check_id": "release-snapshot",
-      "message": "Candidate snapshot a0bae3074eca6070b3841bbf4827d14214934ff044d2b12fac6e7695743c87b8 covers 342 files (git head 36af1bc7e40645cd278fe66338c9856f8d06502d)",
+      "message": "Candidate snapshot c6cb293da3c90e7e3f88d664ac64ec4e8a8ef6fc2ca649b2a0477188b9caf8bd covers 345 files (git head 515a0f1739918158c16da57fb47cc968e620e449)",
       "severity": "ERROR",
       "status": "PASS"
     },
@@ -119,11 +119,11 @@
     "A human expert must review core theorems and statement faithfulness; numerical agreement is evidence, not proof."
   ],
   "snapshot": {
-    "file_count": 342,
+    "file_count": 345,
     "git_dirty": false,
-    "git_head": "36af1bc7e40645cd278fe66338c9856f8d06502d",
+    "git_head": "515a0f1739918158c16da57fb47cc968e620e449",
     "manifest": "state/release_manifest.json",
-    "snapshot_id": "a0bae3074eca6070b3841bbf4827d14214934ff044d2b12fac6e7695743c87b8"
+    "snapshot_id": "c6cb293da3c90e7e3f88d664ac64ec4e8a8ef6fc2ca649b2a0477188b9caf8bd"
   },
   "status": "PASS",
   "warnings": 0
