@@ -2,6 +2,8 @@
 
 **Auditable mathematics research, woven from claims, evidence, and independent verification.**
 
+[GitHub repository](https://github.com/f0909172434/proofweave-math-lab)
+
 ProofWeave is a local, model-independent workspace for mathematical
 research, paper writing and adversarial review. Its core is persistent files and
 deterministic gates—not chat history. It separates proof, literature results,

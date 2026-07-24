@@ -17,3 +17,5 @@
   PDF-inclusive content snapshots and paper-math statement digest bindings.
 - Final regression suite contains 71 passing tests; independent QA reran the toy
   workflow, six routing demonstrations and LaTeX successfully.
+- Branded the project as ProofWeave and published the initial public repository
+  at `https://github.com/f0909172434/proofweave-math-lab`.

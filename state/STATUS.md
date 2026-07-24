@@ -28,8 +28,6 @@ Initialize and validate ProofWeave. No real mathematical research problem has be
 - The first real research question, assumptions and notation are not yet supplied.
 - No live provider API/gateway/CLI-subprocess executor is configured; native host routing is available in this Codex task.
 - Benchmark answer keys have not received independent human review; no performance ranking is available.
-- No Git author is configured, so the exact content-addressed release manifest is
-  the baseline and no local commit has been created.
 
 ## Failed approaches
 
