@@ -104,35 +104,38 @@ ProofWeave 不是一个“输入问题就保证生成正确证明”的黑盒。
 ## 运作方式
 
 ```mermaid
-flowchart LR
-    U["研究问题"] --> I["问题受理与形式化"]
-    I --> S["state/ 持久研究状态"]
-    S --> W["标准代理与工作流"]
-    W --> E["证明、来源、反例与实验等证据"]
-    E --> V["冷启动独立验证"]
-    V -->|"ACCEPT"| G["VERIFIED 事实 DAG"]
-    V -->|"REJECT / UNCERTAIN"| O["缺口、修复与失败路线"]
-    G --> P["论文与后续研究"]
-    O --> S
-    P --> R["发布关卡"]
-    R --> M["报告 + SHA-256 内容快照"]
+flowchart TB
+    A["1. 提出研究问题"] --> B["2. 受理并形式化"]
+    B --> C["3. 保存研究状态"]
+    C --> D["4. 产生证明、来源、反例或实验证据"]
+    D --> E{"5. 独立验证"}
+    E -->|"ACCEPT"| F["6A. 写入 VERIFIED 事实图"]
+    E -->|"REJECT / UNCERTAIN"| G["6B. 记录缺口、修复方向或失败路线"]
+    F --> H["7. 论文与后续研究"]
+    H --> I["8. 发布检查"]
+    I --> J["9. 报告与 SHA-256 快照"]
 ```
+
+阅读方式：研究问题先被形式化并保存；不同角色产生可检查的证据；独立验证者返回 `ACCEPT`、`REJECT` 或 `UNCERTAIN`。只有 `ACCEPT` 能进入已验证事实图，其他结果则保留为缺口或修复工作。
 
 聊天输出不是真理层。研究状态必须写入文件；形式命题只有通过独立验证与确定性一致性检查后，才能成为其他正式命题的依赖。
 
 ### 命题生命周期
 
-```mermaid
-stateDiagram-v2
-    [*] --> DRAFT
-    DRAFT --> PROPOSED
-    PROPOSED --> UNDER_REVIEW
-    UNDER_REVIEW --> VERIFIED: independent ACCEPT
-    UNDER_REVIEW --> REJECTED: decisive flaw
-    UNDER_REVIEW --> UNCERTAIN: missing evidence
-    VERIFIED --> REVOKED: later error or invalid dependency
-    VERIFIED --> SUPERSEDED: replaced by a newer fact
-```
+`DRAFT → PROPOSED → UNDER_REVIEW → VERIFIED / REJECTED / UNCERTAIN`
+
+已验证命题之后也可能变为 `REVOKED` 或 `SUPERSEDED`。
+
+| 状态 | 含义 |
+| --- | --- |
+| `DRAFT` | 尚未整理成可以送审的命题 |
+| `PROPOSED` | 作者已经提交完整陈述、假设、依赖与证明包 |
+| `UNDER_REVIEW` | 正由独立验证者进行冷启动检查 |
+| `VERIFIED` | 独立验证结果为 `ACCEPT`，并通过程序一致性关卡 |
+| `REJECTED` | 发现决定性错误，不能进入真理层 |
+| `UNCERTAIN` | 证据、工具或信息不足，不能视为证明 |
+| `REVOKED` | 先前验证的事实因新错误或无效依赖被撤销 |
+| `SUPERSEDED` | 已被更新的事实版本取代 |
 
 命题作者不能验证自己的命题。只有独立的 `theorem_verifier` 可以执行晋升。形式依赖必须处于 `VERIFIED` 状态且不能形成循环。撤销时会审计所有传递后代以及受影响的论文与实验位置。
 

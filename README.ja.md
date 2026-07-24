@@ -106,35 +106,38 @@ ProofWeave は、課題を入力すれば正しい証明を保証するブラッ
 ## 動作の流れ
 
 ```mermaid
-flowchart LR
-    U["研究課題"] --> I["受付と形式化"]
-    I --> S["state/ の永続研究状態"]
-    S --> W["標準エージェントとワークフロー"]
-    W --> E["証明・情報源・反例・実験の証拠"]
-    E --> V["コールドスタート独立検証"]
-    V -->|"ACCEPT"| G["VERIFIED 事実 DAG"]
-    V -->|"REJECT / UNCERTAIN"| O["ギャップ・修復・失敗経路"]
-    G --> P["論文と後続研究"]
-    O --> S
-    P --> R["リリースゲート"]
-    R --> M["報告 + SHA-256 コンテンツスナップショット"]
+flowchart TB
+    A["1. 研究課題を提示"] --> B["2. 受付と形式化"]
+    B --> C["3. 研究状態を保存"]
+    C --> D["4. 証明・情報源・反例・実験の証拠を作成"]
+    D --> E{"5. 独立検証"}
+    E -->|"ACCEPT"| F["6A. VERIFIED 事実 DAG に追加"]
+    E -->|"REJECT / UNCERTAIN"| G["6B. ギャップ・修復方針・失敗経路を記録"]
+    F --> H["7. 論文と後続研究"]
+    H --> I["8. リリースゲート"]
+    I --> J["9. 報告と SHA-256 スナップショット"]
 ```
+
+読み方：研究課題をまず形式化して保存し、専門ロールが検査可能な証拠を作成します。独立検証者は `ACCEPT`、`REJECT`、`UNCERTAIN` のいずれかを返します。`ACCEPT` だけが検証済み事実グラフへ入り、それ以外はギャップまたは修復作業として残ります。
 
 チャット出力は真理層ではありません。研究状態はファイルに保存し、形式的主張は独立検証と決定論的一貫性検査を通過して初めて、他の正式な主張の依存先になれます。
 
 ### 主張のライフサイクル
 
-```mermaid
-stateDiagram-v2
-    [*] --> DRAFT
-    DRAFT --> PROPOSED
-    PROPOSED --> UNDER_REVIEW
-    UNDER_REVIEW --> VERIFIED: independent ACCEPT
-    UNDER_REVIEW --> REJECTED: decisive flaw
-    UNDER_REVIEW --> UNCERTAIN: missing evidence
-    VERIFIED --> REVOKED: later error or invalid dependency
-    VERIFIED --> SUPERSEDED: replaced by a newer fact
-```
+`DRAFT → PROPOSED → UNDER_REVIEW → VERIFIED / REJECTED / UNCERTAIN`
+
+検証済み主張も、後に `REVOKED` または `SUPERSEDED` になる場合があります。
+
+| 状態 | 意味 |
+| --- | --- |
+| `DRAFT` | まだレビュー可能な主張として整理されていない |
+| `PROPOSED` | 作成者が完全な文、仮定、依存関係、証明パケットを提出した |
+| `UNDER_REVIEW` | 独立検証者がコールドスタートで確認している |
+| `VERIFIED` | 検証結果が `ACCEPT` で、決定論的一貫性ゲートも通過した |
+| `REJECTED` | 決定的な欠陥があり、真理層へ入れない |
+| `UNCERTAIN` | 証拠、ツール、情報が不足し、証明とは扱えない |
+| `REVOKED` | 後の誤りまたは無効な依存関係により、検証済み事実が取り消された |
+| `SUPERSEDED` | より新しい事実バージョンに置き換えられた |
 
 主張の作成者は同じ主張を検証できません。独立した `theorem_verifier` だけが昇格できます。形式的依存は `VERIFIED` で循環がないことが必要です。取消し時にはすべての推移的子孫と影響を受ける論文・実験箇所を監査します。
 

@@ -107,35 +107,38 @@ ProofWeave is not a black box that guarantees a correct proof from a prompt. It 
 ## How it works
 
 ```mermaid
-flowchart LR
-    U["Research question"] --> I["Intake and formalization"]
-    I --> S["Persistent state under state/"]
-    S --> W["Canonical agents and workflows"]
-    W --> E["Proof, source, counterexample, and experiment evidence"]
-    E --> V["Cold-start independent verification"]
-    V -->|"ACCEPT"| G["VERIFIED fact DAG"]
-    V -->|"REJECT / UNCERTAIN"| O["Gaps, repairs, and failed routes"]
-    G --> P["Paper and downstream research"]
-    O --> S
-    P --> R["Release gates"]
-    R --> M["Report + SHA-256 content snapshot"]
+flowchart TB
+    A["1. State the research question"] --> B["2. Intake and formalization"]
+    B --> C["3. Save persistent research state"]
+    C --> D["4. Produce proof, source, counterexample, or experiment evidence"]
+    D --> E{"5. Independent verification"}
+    E -->|"ACCEPT"| F["6A. Add to the VERIFIED fact DAG"]
+    E -->|"REJECT / UNCERTAIN"| G["6B. Record gaps, repair directions, or failed routes"]
+    F --> H["7. Paper and downstream research"]
+    H --> I["8. Release gates"]
+    I --> J["9. Report and SHA-256 snapshot"]
 ```
+
+How to read it: the question is formalized and saved first; specialized roles produce checkable evidence; an independent verifier returns `ACCEPT`, `REJECT`, or `UNCERTAIN`. Only `ACCEPT` enters the verified fact graph. Other outcomes remain visible as gaps or repair work.
 
 Chat output is not the truth layer. Research state must be written to files, and a formal claim can become a dependency only after independent verification and deterministic consistency checks.
 
 ### Claim lifecycle
 
-```mermaid
-stateDiagram-v2
-    [*] --> DRAFT
-    DRAFT --> PROPOSED
-    PROPOSED --> UNDER_REVIEW
-    UNDER_REVIEW --> VERIFIED: independent ACCEPT
-    UNDER_REVIEW --> REJECTED: decisive flaw
-    UNDER_REVIEW --> UNCERTAIN: missing evidence
-    VERIFIED --> REVOKED: later error or invalid dependency
-    VERIFIED --> SUPERSEDED: replaced by a newer fact
-```
+`DRAFT → PROPOSED → UNDER_REVIEW → VERIFIED / REJECTED / UNCERTAIN`
+
+A verified claim may later become `REVOKED` or `SUPERSEDED`.
+
+| Status | Meaning |
+| --- | --- |
+| `DRAFT` | Not yet organized into a reviewable claim |
+| `PROPOSED` | The author submitted a complete statement, assumptions, dependencies, and proof packet |
+| `UNDER_REVIEW` | A cold-start independent verifier is checking it |
+| `VERIFIED` | The verifier returned `ACCEPT` and deterministic consistency gates passed |
+| `REJECTED` | A decisive flaw prevents entry into the truth layer |
+| `UNCERTAIN` | Evidence, tools, or information are insufficient for proof |
+| `REVOKED` | A previously verified fact was withdrawn after a later error or invalid dependency |
+| `SUPERSEDED` | A newer fact version replaced it |
 
 The author cannot verify the same claim. Only an independent `theorem_verifier` can promote it. Formal dependencies must be `VERIFIED` and acyclic. Revocation audits every transitive descendant and affected paper or experiment location.
 
