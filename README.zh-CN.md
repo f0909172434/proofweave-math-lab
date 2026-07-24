@@ -8,6 +8,81 @@
 
 ProofWeave 是一个在本地运行、与模型供应商无关的数学研究工作区，适用于研究、论文写作与对抗式审查。它以持久化文件和确定性检查为核心，而不是依赖聊天记录。系统明确区分证明、文献结果、数值证据、猜想与尚未解决的缺口，并记录每一次模型路由决策，但不把多个模型意见一致当作真理。
 
+## 从这里开始：不会编程也能使用
+
+你不需要掌握 Python、Git、JSON、LaTeX 或命令行。最简单的方式，是让能够读写本地文件的 AI 研究代理打开整个项目文件夹，然后用日常语言描述数学问题。
+
+### 10 分钟快速开始（推荐）
+
+1. 打开 [ProofWeave GitHub 页面](https://github.com/f0909172434/proofweave-math-lab)，选择 **Code → Download ZIP**，或使用 [ZIP 直接下载链接](https://github.com/f0909172434/proofweave-math-lab/archive/refs/heads/main.zip)。
+2. 解压 ZIP，不要直接在压缩文件中操作。
+3. 在 AI 研究代理中选择“打开文件夹／Open folder”，打开解压后的 `proofweave-math-lab` 整个文件夹，而不是只打开 README。需要时可参考官方 [ChatGPT 与 Codex 快速入门](https://learn.chatgpt.com/docs/quickstart.md)。
+4. 复制下面的提示，把方括号内文字换成你的问题。
+
+```text
+我是第一次使用 ProofWeave，也不会编程。请全程使用简体中文，
+不要要求我操作终端、编写程序或手动修改 JSON。
+
+请完整阅读 AGENTS.md、workflows/00_project_intake.md 和
+workflows/01_problem_formalization.md，再协助我建立新的数学研究项目。
+
+我的研究问题是：
+【在这里写下问题；不完整也没关系】
+
+请一次只问我一个简短问题，并用普通语言解释为什么需要这项信息。
+你负责更新 state/problem.md、state/assumptions.md、state/notation.md、
+state/research_plan.md 和必要的状态文件。先不要尝试证明，也不要把猜想、
+数值结果或多个 AI 的共同意见写成定理。
+
+受理完成后，请用通俗语言重述正式问题，列出假设和符号，把所有不确定
+事项标为 OPEN GAP，建议下一个安全步骤，并运行项目现有检查。不要使用
+付费 API、上传数据或发布内容；如确实需要，必须先征得我的同意。
+```
+
+按照代理的问题逐项回答即可。“不知道”也是有效答案，系统应记录不确定性，而不是替你猜测。第一次会话结束时，`state/` 文件夹中应留下通俗的问题陈述、明确的定义域与假设、完成标准、`OPEN GAP` 清单和一个安全的下一步。
+
+## 常用任务提示词
+
+| 目的 | 可直接复制的提示 |
+| --- | --- |
+| 查看进度 | `阅读 state/STATUS.md、state/open_gaps.md 和 state/research_plan.md，用通俗语言说明已确认内容、未知内容和下一步。` |
+| 整理文献 | `按照 workflows/02_literature_review.md 建立文献地图，核对原始来源，并区分已打开验证的证据与搜索线索。` |
+| 寻找方法 | `按照 workflows/03_idea_swarm.md 提出 3–5 条本质不同的路线，并说明主要障碍、最小测试和停止条件。` |
+| 尝试证明 | `按照 workflows/04_proof_search.md 处理最小的明确命题。有缺口就保持 UNCERTAIN，不要自行宣布 VERIFIED。` |
+| 寻找反例 | `按照 workflows/05_counterexample_search.md 优先测试端点、退化情况和最小维度。有限计算只能作为证据。` |
+| 数值实验 | `按照 workflows/07_computational_experiment.md 保存设置、程序、数据、图和限制，并明确说明结果不是证明。` |
+| 审查论文 | `按照 workflows/11_full_paper_review.md 严格审查，分别列出致命、主要和次要问题，以及仍需人工专家判断的事项。` |
+| 保存交接 | `按照 workflows/14_session_handoff.md 更新状态、决策、未解缺口和失败路线，让下一次会话可以继续。` |
+
+## 初学者必须知道的四件事
+
+1. `VERIFIED` 是项目工作流状态，不等于普遍数学真理或人工同行评审。
+2. 数值计算是证据，不是证明，即使测试规模很大也一样。
+3. 没找到反例不等于已经证明；应诚实使用 `PROPOSED`、`UNCERTAIN` 和 `OPEN GAP`。
+4. 研究状态保存在项目文件中。请备份整个文件夹，不要把未公开研究上传到公共仓库。
+
+## 初学者文件地图
+
+| 位置 | 用途 |
+| --- | --- |
+| `state/problem.md` | 当前研究问题与精确目标 |
+| `state/assumptions.md` | 假设、限制与一致性问题 |
+| `state/notation.md` | 符号、定义域与记号约定 |
+| `state/research_plan.md` | 步骤、风险、停止条件与完成标准 |
+| `state/STATUS.md` | 当前进度摘要 |
+| `state/open_gaps.md` | 尚未解决或验证的问题 |
+| `state/dead_ends.md` | 已失败路线，避免重复浪费时间 |
+| `state/fact_graph.jsonl` | 形式命题与依赖关系 |
+| `literature/`、`experiments/`、`paper/` | 文献、可复现实验与论文文件 |
+
+## 常见问题
+
+- **代理找不到项目：** 打开直接包含 `AGENTS.md`、`state/` 和 `workflows/` 的文件夹，而不是 ZIP 或单个文件。
+- **代理要求 API 密钥或付费：** 回复“保持本地原生模式，不要启用外部 API 或付费调用。”
+- **看不懂错误：** 把完整错误发给代理，让它直接诊断和修复，不要只让它给你命令。
+- **代理声称命题已证明：** 要求查看 fact ID、完整假设、证明文件、独立验证报告和依赖。任何一项缺失，都应保持 `PROPOSED` 或 `UNCERTAIN`。
+- **工作只在聊天中：** 要求代理执行会话交接流程。只存在于聊天中的内容不是持久研究状态。
+
 ## 已实现功能
 
 - 具备循环防护和“仅允许 VERIFIED 形式依赖”的事实有向无环图；
@@ -24,9 +99,9 @@ ProofWeave 是一个在本地运行、与模型供应商无关的数学研究工
 
 `VERIFIED` 只是项目内的工作流状态，不代表人工同行评审或形式上的绝对确定。Lean 支持是可选功能；只有在固定版本的构建中不存在被禁止的 `sorry`、`admit` 或非预期公理时，才能标记为机器检查，且仍须由人工确认形式陈述与原始定理一致。
 
-## 快速开始
+## 可选：命令行快速开始
 
-在仓库根目录使用 Python 3.11 或更高版本：
+初学者可以跳过本节。只有希望自行运行确定性工具时，才需要在仓库根目录使用 Python 3.11 或更高版本：
 
 ```powershell
 python -m mathlab init
