@@ -87,7 +87,7 @@
     {
       "artifact": null,
       "check_id": "unit-tests",
-      "message": "----------------------------------------------------------------------\nRan 71 tests in 0.802s\n\nOK",
+      "message": "----------------------------------------------------------------------\nRan 72 tests in 1.236s\n\nOK",
       "severity": "ERROR",
       "status": "PASS"
     },
@@ -101,16 +101,9 @@
     {
       "artifact": null,
       "check_id": "release-snapshot",
-      "message": "Candidate snapshot 1019f461bd50574424915ad16c8a504f9067beebcd038c8088f493ba09e883f9 covers 342 files (unborn/uncommitted Git repository)",
+      "message": "Candidate snapshot a0bae3074eca6070b3841bbf4827d14214934ff044d2b12fac6e7695743c87b8 covers 342 files (git head 36af1bc7e40645cd278fe66338c9856f8d06502d)",
       "severity": "ERROR",
       "status": "PASS"
-    },
-    {
-      "artifact": null,
-      "check_id": "release-vcs",
-      "message": "No clean Git commit identifies this snapshot; the content-addressed manifest is the release baseline.",
-      "severity": "WARNING",
-      "status": "WARN"
     },
     {
       "artifact": null,
@@ -127,11 +120,11 @@
   ],
   "snapshot": {
     "file_count": 342,
-    "git_dirty": true,
-    "git_head": null,
+    "git_dirty": false,
+    "git_head": "36af1bc7e40645cd278fe66338c9856f8d06502d",
     "manifest": "state/release_manifest.json",
-    "snapshot_id": "1019f461bd50574424915ad16c8a504f9067beebcd038c8088f493ba09e883f9"
+    "snapshot_id": "a0bae3074eca6070b3841bbf4827d14214934ff044d2b12fac6e7695743c87b8"
   },
   "status": "PASS",
-  "warnings": 1
+  "warnings": 0
 }
