@@ -16,7 +16,7 @@ Python、Git、JSON、LaTeX、コマンドラインを知っている必要は�
 
 1. [ProofWeave の GitHub ページ](https://github.com/f0909172434/proofweave-math-lab)を開き、**Code → Download ZIP** を選ぶか、[ZIP の直接ダウンロード](https://github.com/f0909172434/proofweave-math-lab/archive/refs/heads/main.zip)を使用します。
 2. ZIP を展開します。圧縮ファイルの中で直接作業しないでください。
-3. AI 研究エージェントで **Open folder** を選び、展開した `proofweave-math-lab` フォルダー全体を開きます。この README だけを開くのではありません。必要なら公式の [ChatGPT／Codex クイックスタート](https://learn.chatgpt.com/docs/quickstart.md)を参照してください。
+3. AI 研究エージェントで **Open folder** を選び、展開した `proofweave-math-lab` フォルダー全体を開きます。この README だけを開くのではありません。必要なら公式の [ChatGPT／Codex クイックスタート](https://learn.chatgpt.com/docs/quickstart)を参照してください。
 4. 次のプロンプトを貼り付け、角括弧内をご自身の課題に置き換えます。
 
 ```text

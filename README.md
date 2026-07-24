@@ -32,7 +32,7 @@ ProofWeave 是一個在本機執行、與模型供應商無關的數學研究工
 
 在你的 AI 研究代理中選擇「開啟資料夾／Open folder」，選取剛剛解壓縮的 `proofweave-math-lab` 資料夾。務必開啟整個資料夾，而不是只打開 `README.md`。
 
-如果尚未安裝可用的代理，可先參考 OpenAI 官方的 [ChatGPT 與 Codex 快速入門](https://learn.chatgpt.com/docs/quickstart.md)。不同版本的按鈕名稱可能略有差異，但重點都是讓代理取得這個資料夾的工作區權限。
+如果尚未安裝可用的代理，可先參考 OpenAI 官方的 [ChatGPT 與 Codex 快速入門](https://learn.chatgpt.com/docs/quickstart)。不同版本的按鈕名稱可能略有差異，但重點都是讓代理取得這個資料夾的工作區權限。
 
 ### 第 3 步：複製並貼上這段話
 

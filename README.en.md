@@ -16,7 +16,7 @@ You do not need to know Python, Git, JSON, LaTeX, or the command line. The easie
 
 1. Open the [ProofWeave GitHub page](https://github.com/f0909172434/proofweave-math-lab), choose **Code → Download ZIP**, or use the [direct ZIP download](https://github.com/f0909172434/proofweave-math-lab/archive/refs/heads/main.zip).
 2. Extract the ZIP. Do not work inside the compressed file.
-3. In your AI research agent, choose **Open folder** and select the extracted `proofweave-math-lab` folder. Open the whole folder, not only this README. If needed, see the official [ChatGPT and Codex quickstart](https://learn.chatgpt.com/docs/quickstart.md).
+3. In your AI research agent, choose **Open folder** and select the extracted `proofweave-math-lab` folder. Open the whole folder, not only this README. If needed, see the official [ChatGPT and Codex quickstart](https://learn.chatgpt.com/docs/quickstart).
 4. Paste the prompt below and replace the text in brackets with your question.
 
 ```text

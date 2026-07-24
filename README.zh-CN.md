@@ -16,7 +16,7 @@ ProofWeave 是一个在本地运行、与模型供应商无关的数学研究工
 
 1. 打开 [ProofWeave GitHub 页面](https://github.com/f0909172434/proofweave-math-lab)，选择 **Code → Download ZIP**，或使用 [ZIP 直接下载链接](https://github.com/f0909172434/proofweave-math-lab/archive/refs/heads/main.zip)。
 2. 解压 ZIP，不要直接在压缩文件中操作。
-3. 在 AI 研究代理中选择“打开文件夹／Open folder”，打开解压后的 `proofweave-math-lab` 整个文件夹，而不是只打开 README。需要时可参考官方 [ChatGPT 与 Codex 快速入门](https://learn.chatgpt.com/docs/quickstart.md)。
+3. 在 AI 研究代理中选择“打开文件夹／Open folder”，打开解压后的 `proofweave-math-lab` 整个文件夹，而不是只打开 README。需要时可参考官方 [ChatGPT 与 Codex 快速入门](https://learn.chatgpt.com/docs/quickstart)。
 4. 复制下面的提示，把方括号内文字换成你的问题。
 
 ```text
