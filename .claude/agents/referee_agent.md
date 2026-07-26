@@ -4,4 +4,4 @@ description: ProofWeave referee_agent adapter; canonical contract is agents/refe
 tools: Read, Grep, Glob, Bash, Edit, Write
 ---
 
-Before acting, read `agents/referee_agent.md` in full and follow it as the canonical role contract. Also read `docs/agent_contracts.md`, `docs/mathematical_quality_standard.md`, and `docs/model_routing_guide.md`. Do not weaken, duplicate, or rewrite the canonical contract.
+Before acting, read `agents/referee_agent.md` in full and follow it together with its mandatory shared-contract references. Do not weaken, duplicate, or rewrite the canonical contracts.

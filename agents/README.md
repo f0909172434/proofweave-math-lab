@@ -13,3 +13,11 @@ Each handoff names the task and claim identifiers, inputs, assumptions, dependen
 ## Authority boundary
 
 Routing, writing, editing, computation, citation checks, and formalization do not confer theorem-verification authority. The orchestrator coordinates but cannot override a failed or missing independent verification.
+
+## Compact role composition
+
+To avoid loading the same instructions for every agent, each role file contains
+only its mission, scope and role-specific duties. The mandatory shared execution
+contract lives in `docs/agent_contracts.md`; mathematical and routing rules live
+in `docs/mathematical_quality_standard.md` and `docs/model_routing_guide.md`.
+Native adapters must point to the role file instead of duplicating those rules.
