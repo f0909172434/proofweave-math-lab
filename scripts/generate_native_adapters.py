@@ -53,12 +53,12 @@ def main() -> int:
         canonical = f"agents/{role}.md"
         write(
             codex_agents / f"{role}.toml",
-            f'''name = "{role}"\ndescription = "ProofWeave {role} adapter; canonical contract is {canonical}."\ndeveloper_instructions = """\nBefore acting, read {canonical} from the repository root in full and follow it as the canonical role contract. Also read docs/agent_contracts.md, docs/mathematical_quality_standard.md, and docs/model_routing_guide.md. Do not weaken, duplicate, or rewrite the canonical contract.\n"""\n''',
+            f'''name = "{role}"\ndescription = "ProofWeave {role} adapter; canonical contract is {canonical}."\ndeveloper_instructions = """\nBefore acting, read {canonical} from the repository root in full and follow it together with its mandatory shared-contract references. Do not weaken, duplicate, or rewrite the canonical contracts.\n"""\n''',
         )
         tools = "Read, Grep, Glob, Bash" if role in {"theorem_verifier", "reference_auditor", "dependency_auditor"} else "Read, Grep, Glob, Bash, Edit, Write"
         write(
             claude_agents / f"{role}.md",
-            f'''---\nname: {role}\ndescription: ProofWeave {role} adapter; canonical contract is {canonical}.\ntools: {tools}\n---\n\nBefore acting, read `{canonical}` in full and follow it as the canonical role contract. Also read `docs/agent_contracts.md`, `docs/mathematical_quality_standard.md`, and `docs/model_routing_guide.md`. Do not weaken, duplicate, or rewrite the canonical contract.\n''',
+            f'''---\nname: {role}\ndescription: ProofWeave {role} adapter; canonical contract is {canonical}.\ntools: {tools}\n---\n\nBefore acting, read `{canonical}` in full and follow it together with its mandatory shared-contract references. Do not weaken, duplicate, or rewrite the canonical contracts.\n''',
         )
     for skill, target in SKILLS.items():
         body = f'''---\nname: {skill}\ndescription: Run the ProofWeave {skill} workflow using the canonical project artifact.\n---\n\nRead `{target}` in full, then follow it. Canonical role contracts remain in `agents/`; truth-layer changes must go through deterministic CLI gates. Do not perform paid calls, publish, push, upload, or expose credentials without explicit authorization.\n'''
