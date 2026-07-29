@@ -338,6 +338,19 @@ python -m mathlab context explain PACKET.json
 Context compiler 只包含任務、精確命題、假設與 VERIFIED 依賴閉包；遇到
 超額證明或依賴鏈會回傳 context review，而不會靜默截斷。
 
+可稽核的協作 request／result 工件：
+
+```powershell
+python -m mathlab collab prepare FACT_ID --role review --risk high --profile max
+python -m mathlab collab ingest RESULT.json
+python -m mathlab collab audit
+python -m mathlab collab history
+```
+
+完整的費用、隱私、reviewer 獨立性與 fallback 規範見
+`docs/ai_collaboration_console.md`。`collab prepare` 只產生 request，
+不會自行呼叫外部模型，也不能把 Console 輸出升格為 `VERIFIED`。
+
 在原生模式中，`route run` 只會記錄乾式交接，不會暗中呼叫外部供應商。除非操作者明確修改 `config/runtime_policy.json`，並接受額度、隱私與費用後果，否則 CLI、API 與閘道執行都保持停用。
 
 ## 示範

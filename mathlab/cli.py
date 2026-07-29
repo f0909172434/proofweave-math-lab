@@ -9,6 +9,7 @@ from typing import Any, Sequence
 from .benchmark_runner import BenchmarkRunner
 from .budget_manager import BudgetManager
 from .capability_probe import detect_capabilities
+from .collab import CollaborationArtifacts, ROLE_CAPABILITIES
 from .context_packets import build_context_packet, check_context_packet, explain_context_packet
 from .errors import MathLabError
 from .fact_graph import FactGraph
@@ -385,6 +386,109 @@ def cmd_context_explain(args: argparse.Namespace) -> int:
     return 0 if check_context_packet(packet)["status"] == "READY" else 2
 
 
+_COLLAB_CONTEXT_ROLES = {
+    "coding": "proof_worker",
+    "math": "proof_worker",
+    "research": "strategy_generator",
+    "scientific_writing": "mathematical_writer",
+    "teaching_material": "mathematical_writer",
+    "data_analysis": "computation_experimenter",
+    "summarization": "orchestrator",
+    "translation": "style_editor",
+    "review": "theorem_verifier",
+    "general": "orchestrator",
+}
+
+
+def cmd_collab_prepare(args: argparse.Namespace) -> int:
+    root = _root(args)
+    profile = args.profile or {"low": "fast", "medium": "standard", "high": "max"}[args.risk]
+    task_input, task_id, objective = _task_input(root, args.task, args.fact_id)
+    if args.context_packet:
+        packet = _load_packet(args.context_packet)
+        report = check_context_packet(packet)
+        if not report["valid"]:
+            raise ValueError("Context packet failed integrity validation")
+        packet_path = Path(args.context_packet).resolve()
+    else:
+        packet = build_context_packet(
+            task_input,
+            _COLLAB_CONTEXT_ROLES[args.role],
+            root / "state" / "fact_graph.jsonl",
+            target_fact_id=args.fact_id,
+            artifacts=args.artifact,
+            sources=args.source,
+            budget=profile,
+            project_root=root,
+        )
+        report = check_context_packet(packet)
+        packet_path = _write_packet(root, packet)
+    if args.sensitivity == "restricted":
+        record = CollaborationArtifacts(root).needs_attention(
+            task_id,
+            "Restricted tasks require an approved local Qwen or gpt-oss lane; none is declared by this artifact layer.",
+            requested_profile=profile,
+            context_packet_digest=packet["packet_id"],
+        )
+        _print(
+            {
+                "status": "needs_attention",
+                "record": record,
+                "context_packet": str(packet_path),
+                "submission_performed": False,
+            }
+        )
+        return 2
+    request = CollaborationArtifacts(root).prepare(
+        task_id,
+        objective,
+        role=args.role,
+        research_status=args.research_status,
+        context_packet_digest=packet["packet_id"],
+        risk=args.risk,
+        sensitivity=args.sensitivity,
+        profile=profile,
+        max_output_tokens=args.max_output_tokens,
+        max_rounds=args.max_rounds,
+        estimated_cost_usd=args.estimated_cost_usd,
+    )
+    output = (
+        Path(args.output)
+        if args.output
+        else root / "build" / "collab-requests" / f"{request['request_id']}.json"
+    )
+    if not output.is_absolute():
+        output = root / output
+    save_json(output, request)
+    _print(
+        {
+            "status": "READY" if report["status"] == "READY" else "NEEDS_CONTEXT_REVIEW",
+            "request": str(output),
+            "context_packet": str(packet_path),
+            "context_packet_digest": packet["packet_id"],
+            "estimated_input_tokens": report["estimated_tokens"],
+            "submission_performed": False,
+        }
+    )
+    return 0 if report["status"] == "READY" else 2
+
+
+def cmd_collab_ingest(args: argparse.Namespace) -> int:
+    _print(CollaborationArtifacts(_root(args)).ingest(_record_from_file(args.result)))
+    return 0
+
+
+def cmd_collab_audit(args: argparse.Namespace) -> int:
+    report = CollaborationArtifacts(_root(args)).audit()
+    _print(report)
+    return 0 if report["status"] == "PASS" else 1
+
+
+def cmd_collab_history(args: argparse.Namespace) -> int:
+    _print(CollaborationArtifacts(_root(args)).history())
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="mathlab", description="ProofWeave auditable mathematics research workspace"
@@ -474,6 +578,36 @@ def build_parser() -> argparse.ArgumentParser:
         sub = context_sub.add_parser(name)
         sub.add_argument("packet")
         sub.set_defaults(func=func)
+
+    collab = commands.add_parser("collab")
+    collab_sub = collab.add_subparsers(dest="collab_command", required=True)
+    collab_prepare = collab_sub.add_parser("prepare")
+    collab_prepare.add_argument("task")
+    collab_prepare.add_argument("--role", choices=sorted(ROLE_CAPABILITIES), required=True)
+    collab_prepare.add_argument("--fact-id")
+    collab_prepare.add_argument("--risk", choices=["low", "medium", "high"], default="medium")
+    collab_prepare.add_argument(
+        "--sensitivity", choices=["public", "private", "restricted"], default="private"
+    )
+    collab_prepare.add_argument("--profile", choices=["fast", "standard", "deep", "max"])
+    collab_prepare.add_argument(
+        "--research-status",
+        choices=["PROPOSED", "OPEN", "COMPUTATIONAL"],
+        default="PROPOSED",
+    )
+    collab_prepare.add_argument("--context-packet")
+    collab_prepare.add_argument("--artifact", action="append")
+    collab_prepare.add_argument("--source", action="append")
+    collab_prepare.add_argument("--max-output-tokens", type=int, default=4096)
+    collab_prepare.add_argument("--max-rounds", type=int, default=1)
+    collab_prepare.add_argument("--estimated-cost-usd", type=float, default=0.70)
+    collab_prepare.add_argument("--output")
+    collab_prepare.set_defaults(func=cmd_collab_prepare)
+    collab_ingest = collab_sub.add_parser("ingest")
+    collab_ingest.add_argument("result")
+    collab_ingest.set_defaults(func=cmd_collab_ingest)
+    collab_sub.add_parser("audit").set_defaults(func=cmd_collab_audit)
+    collab_sub.add_parser("history").set_defaults(func=cmd_collab_history)
     return parser
 
 
