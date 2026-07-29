@@ -82,6 +82,27 @@ class StatusReportTests(unittest.TestCase):
             self.assertIn("F-VERIFIED", paths["markdown_en"].read_text(encoding="utf-8"))
             self.assertIn("F-PROPOSED", paths["tex_zh-TW"].read_text(encoding="utf-8"))
 
+    def test_status_writer_preflights_all_templates_before_writing(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._state_root(temp)
+            canonical = root / "state" / "STATUS.md"
+            canonical.write_text("existing status\n", encoding="utf-8")
+            templates = root / "paper" / "status_templates"
+            templates.mkdir(parents=True)
+            (templates / "status_en.tex.in").write_text(
+                "{{SOURCE_DIGEST}}\n", encoding="utf-8"
+            )
+
+            with self.assertRaises(FileNotFoundError):
+                write_status_sources(root)
+            self.assertEqual("existing status\n", canonical.read_text(encoding="utf-8"))
+
+    def test_status_renderer_rejects_unknown_locale(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            report = build_status_report(self._state_root(temp))
+            with self.assertRaisesRegex(ValueError, "Unsupported status locale"):
+                render_status_markdown(report, "unknown")
+
 
 class ManuscriptManifestTests(unittest.TestCase):
     def _manifest_root(self, directory: str) -> Path:
