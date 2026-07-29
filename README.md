@@ -327,6 +327,15 @@ python -m mathlab budget estimate TASK_FILE
 python -m mathlab providers status
 ```
 
+由 truth layer 重新產生狀態摘要：
+
+```powershell
+python -m mathlab status --write
+```
+
+此命令從 fact graph、issue ledger 與 project state 衍生數量、阻塞項和 digest；
+不會修改 fact 狀態，也不允許手動維護統計數字。英文與繁體中文來源分開生成。
+
 最小且可稽核的 context packet：
 
 ```powershell
