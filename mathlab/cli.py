@@ -18,6 +18,7 @@ from .issue_ledger import IssueLedger
 from .model_registry import ModelRegistry
 from .model_router import recommend_model
 from .project_state import initialize_state, project_summary
+from .reports import write_status_sources
 from .routing_audit import RoutingAudit
 from .source_registry import SourceRegistry
 from .task_classifier import classify_task, load_task
@@ -79,7 +80,13 @@ def cmd_init(args: argparse.Namespace) -> int:
 
 
 def cmd_status(args: argparse.Namespace) -> int:
-    _print(project_summary(_root(args)))
+    root = _root(args)
+    value: dict[str, Any] = {"summary": project_summary(root)}
+    if args.write:
+        value["generated"] = {
+            key: str(path) for key, path in write_status_sources(root).items()
+        }
+    _print(value if args.write else value["summary"])
     return 0
 
 
@@ -499,7 +506,11 @@ def build_parser() -> argparse.ArgumentParser:
     init = commands.add_parser("init")
     init.add_argument("--force", action="store_true")
     init.set_defaults(func=cmd_init)
-    commands.add_parser("status").set_defaults(func=cmd_status)
+    status = commands.add_parser("status")
+    status.add_argument(
+        "--write", action="store_true", help="regenerate truth-derived bilingual status sources"
+    )
+    status.set_defaults(func=cmd_status)
 
     source = commands.add_parser("add-source")
     source.add_argument("--file", required=True)

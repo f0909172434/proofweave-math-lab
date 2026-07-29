@@ -1,0 +1,40 @@
+\documentclass[11pt]{ctexart}
+\usepackage[a4paper,margin=25mm]{geometry}
+\usepackage{hyperref}
+\usepackage{seqsplit}
+\sloppy
+\title{研究狀態（由 truth layer 衍生）}
+\date{}
+\begin{document}
+\maketitle
+\noindent\textbf{project state 時間戳記：} \texttt{{{UPDATED_AT}}}\\
+\textbf{來源摘要（SHA-256）：} \texttt{\seqsplit{{{SOURCE_DIGEST}}}}
+
+\medskip
+\noindent 本報告僅為唯讀摘要；它不會升格 claim，也不會把計算證據當作證明。
+
+\section*{數量}
+\textbf{事實：} {{FACT_COUNTS}}\\
+\textbf{議題：} {{ISSUE_COUNTS}}
+
+\section*{依狀態列出的事實}
+{{FACTS_BY_STATUS}}
+
+\section*{尚未解決的發行阻塞項（FATAL/MAJOR）}
+{{BLOCKING_ISSUES}}
+
+\section*{目前目標}
+{{CURRENT_OBJECTIVE}}
+
+\section*{建議的下一步}
+{{NEXT_ACTION}}
+
+\section*{PROPOSED 結果（尚未驗證）}
+{{PROPOSED_RESULTS}}
+
+\section*{尚缺獨立驗證的工作}
+{{MISSING_VERIFICATION}}
+
+\section*{canonical 來源}
+{{SOURCES}}
+\end{document}

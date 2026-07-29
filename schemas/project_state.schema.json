@@ -6,6 +6,15 @@
   "required": ["current_objective", "verified_results", "proposed_results", "refuted_claims", "active_workers", "blocking_gaps", "failed_approaches", "latest_experiments", "next_recommended_action", "additional_model_usage_justified", "current_execution_mode", "verified_available_models", "configured_unverified_models", "disabled_models", "budget_mode", "recent_routing_decisions", "escalations", "downgrades", "tasks_lacking_independent_verification", "updated_at"],
   "properties": {
     "current_objective": {"type": "string"},
+    "status_narrative": {
+      "type": "object",
+      "required": ["en", "zh-TW"],
+      "properties": {
+        "en": {"$ref": "#/$defs/statusNarrative"},
+        "zh-TW": {"$ref": "#/$defs/statusNarrative"}
+      },
+      "additionalProperties": false
+    },
     "verified_results": {"type": "array"},
     "proposed_results": {"type": "array"},
     "refuted_claims": {"type": "array"},
@@ -25,6 +34,19 @@
     "downgrades": {"type": "array"},
     "tasks_lacking_independent_verification": {"type": "array"},
     "updated_at": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {
+    "statusNarrative": {
+      "type": "object",
+      "required": ["current_objective", "next_recommended_action", "proposed_results", "tasks_lacking_independent_verification"],
+      "properties": {
+        "current_objective": {"type": "string", "minLength": 1},
+        "next_recommended_action": {"type": "string", "minLength": 1},
+        "proposed_results": {"type": "array", "items": {"type": "string"}},
+        "tasks_lacking_independent_verification": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": false
 }
