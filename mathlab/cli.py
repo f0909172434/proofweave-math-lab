@@ -9,6 +9,7 @@ from typing import Any, Sequence
 from .benchmark_runner import BenchmarkRunner
 from .budget_manager import BudgetManager
 from .capability_probe import detect_capabilities
+from .context_packets import build_context_packet, check_context_packet, explain_context_packet
 from .errors import MathLabError
 from .fact_graph import FactGraph
 from .io import configure_utf8_console, find_project_root, load_json, save_json
@@ -289,6 +290,101 @@ def cmd_providers_status(args: argparse.Namespace) -> int:
     return 0
 
 
+def _task_input(root: Path, task: str, fact_id: str | None = None) -> tuple[Any, str, str]:
+    """Resolve a task file or turn a Fact ID into a minimal task declaration."""
+
+    candidate = Path(task)
+    if not candidate.is_absolute():
+        candidate = root / candidate
+    if candidate.is_file():
+        objective = f"Execute the bounded research task in {candidate.relative_to(root)}."
+        task_id = candidate.stem
+        if candidate.suffix.lower() == ".json":
+            value = _record_from_file(str(candidate))
+            task_id = str(value.get("task_id") or value.get("id") or task_id)
+            objective = str(
+                value.get("objective")
+                or value.get("goal")
+                or value.get("task")
+                or objective
+            )
+        return candidate, task_id, objective
+
+    target = fact_id or task
+    try:
+        record = FactGraph(root / "state" / "fact_graph.jsonl").get(target)
+    except Exception as exc:
+        raise ValueError(
+            f"TASK must be a readable project file or an existing Fact ID: {task}"
+        ) from exc
+    return (
+        {
+            "task_id": target,
+            "target_fact_id": target,
+            "goal": f"Produce bounded evidence for {target} without changing its truth status.",
+            "completion_criteria": [
+                "State the conclusion and evidence class.",
+                "Preserve all assumptions and VERIFIED dependencies.",
+            ],
+            "stop_conditions": [
+                "Stop on missing assumptions, missing dependencies, or unverifiable cost."
+            ],
+        },
+        target,
+        str(record.get("title") or record.get("statement") or target),
+    )
+
+
+def _build_packet_from_args(root: Path, args: argparse.Namespace) -> dict[str, Any]:
+    task_input, _, _ = _task_input(root, args.task, getattr(args, "fact_id", None))
+    return build_context_packet(
+        task_input,
+        args.role,
+        root / "state" / "fact_graph.jsonl",
+        target_fact_id=getattr(args, "fact_id", None),
+        artifacts=getattr(args, "artifact", None),
+        sources=getattr(args, "source", None),
+        budget=getattr(args, "profile", "standard"),
+        project_root=root,
+    )
+
+
+def _write_packet(root: Path, packet: dict[str, Any], output: str | None = None) -> Path:
+    path = Path(output) if output else root / str(packet["cache_path"])
+    if not path.is_absolute():
+        path = root / path
+    save_json(path, packet)
+    return path
+
+
+def cmd_context_build(args: argparse.Namespace) -> int:
+    root = _root(args)
+    packet = _build_packet_from_args(root, args)
+    path = _write_packet(root, packet, args.output)
+    report = check_context_packet(packet)
+    _print({"packet": str(path), **report})
+    return 0 if report["status"] == "READY" else 2
+
+
+def _load_packet(path: str) -> dict[str, Any]:
+    value = load_json(Path(path))
+    if not isinstance(value, dict):
+        raise ValueError("Context packet must be a JSON object")
+    return value
+
+
+def cmd_context_check(args: argparse.Namespace) -> int:
+    report = check_context_packet(_load_packet(args.packet))
+    _print(report)
+    return 0 if report["status"] == "READY" else 2
+
+
+def cmd_context_explain(args: argparse.Namespace) -> int:
+    packet = _load_packet(args.packet)
+    _print(explain_context_packet(packet))
+    return 0 if check_context_packet(packet)["status"] == "READY" else 2
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="mathlab", description="ProofWeave auditable mathematics research workspace"
@@ -360,6 +456,24 @@ def build_parser() -> argparse.ArgumentParser:
     providers = commands.add_parser("providers")
     provider_sub = providers.add_subparsers(dest="provider_command", required=True)
     provider_sub.add_parser("status").set_defaults(func=cmd_providers_status)
+
+    context = commands.add_parser("context")
+    context_sub = context.add_subparsers(dest="context_command", required=True)
+    context_build = context_sub.add_parser("build")
+    context_build.add_argument("task")
+    context_build.add_argument("--role", required=True)
+    context_build.add_argument("--fact-id")
+    context_build.add_argument(
+        "--profile", choices=["fast", "standard", "deep", "max"], default="standard"
+    )
+    context_build.add_argument("--artifact", action="append")
+    context_build.add_argument("--source", action="append")
+    context_build.add_argument("--output")
+    context_build.set_defaults(func=cmd_context_build)
+    for name, func in (("check", cmd_context_check), ("explain", cmd_context_explain)):
+        sub = context_sub.add_parser(name)
+        sub.add_argument("packet")
+        sub.set_defaults(func=func)
     return parser
 
 

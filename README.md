@@ -327,6 +327,17 @@ python -m mathlab budget estimate TASK_FILE
 python -m mathlab providers status
 ```
 
+最小且可稽核的 context packet：
+
+```powershell
+python -m mathlab context build FACT_ID --role theorem_verifier --profile max
+python -m mathlab context check PACKET.json
+python -m mathlab context explain PACKET.json
+```
+
+Context compiler 只包含任務、精確命題、假設與 VERIFIED 依賴閉包；遇到
+超額證明或依賴鏈會回傳 context review，而不會靜默截斷。
+
 在原生模式中，`route run` 只會記錄乾式交接，不會暗中呼叫外部供應商。除非操作者明確修改 `config/runtime_policy.json`，並接受額度、隱私與費用後果，否則 CLI、API 與閘道執行都保持停用。
 
 ## 示範
