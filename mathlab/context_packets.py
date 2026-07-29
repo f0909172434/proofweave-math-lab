@@ -198,6 +198,17 @@ def _safe_label(path: Path, root: Path) -> str:
         return path.name
 
 
+def _confine_path(path: Path, root: Path, kind: str) -> Path:
+    """Resolve a context input and reject reads outside the project root."""
+
+    resolved = path.resolve()
+    try:
+        resolved.relative_to(root.resolve())
+    except ValueError as exc:
+        raise ValidationError(f"{kind} path must stay inside the project root: {path}") from exc
+    return resolved
+
+
 def _looks_forbidden_path(path: Path) -> str | None:
     lowered = [part.lower() for part in path.parts]
     filename = path.name.lower()
@@ -284,6 +295,7 @@ def _resolve_text_input(
                 path = role_path
 
     if path is not None:
+        path = _confine_path(path, root, kind)
         forbidden = _looks_forbidden_path(path)
         raw, parsed, format_name = _read_path(path)
         label = _safe_label(path, root)
@@ -348,6 +360,7 @@ def _load_fact_graph(value: Any, root: Path) -> tuple[list[dict[str, Any]], dict
         path = Path(value)
         if not path.is_absolute():
             path = root / path
+        path = _confine_path(path, root, "fact_graph")
         try:
             raw = path.read_bytes()
         except OSError as exc:
@@ -525,6 +538,7 @@ def _materialize_items(
             if rooted.is_file():
                 path = rooted
         if path is not None:
+            path = _confine_path(path, root, kind)
             raw, parsed, format_name = _read_path(path)
             label = _safe_label(path, root)
             descriptor = {
@@ -572,6 +586,7 @@ def _load_policy(
         path = Path(item)
         if not path.is_absolute():
             path = root / path
+        path = _confine_path(path, root, "policy")
         try:
             raw = path.read_bytes()
         except OSError as exc:

@@ -167,6 +167,26 @@ class ContextPacketTests(unittest.TestCase):
         self.assertEqual("opened source claim", packet["sources"][0]["content"])
         self.assertIn("Target fact: target", explain_context_packet(packet))
 
+    def test_file_inputs_must_stay_inside_project_root(self) -> None:
+        facts = [_fact("target", "PROPOSED")]
+        with tempfile.TemporaryDirectory() as outside_temp:
+            outside = Path(outside_temp) / "outside.md"
+            outside.write_text("must not be read", encoding="utf-8")
+            with self.assertRaisesRegex(ValidationError, "inside the project root"):
+                self._build(facts, artifacts=[outside])
+
+            outside_graph = Path(outside_temp) / "fact_graph.jsonl"
+            outside_graph.write_text(
+                json.dumps(_fact("target", "PROPOSED")) + "\n", encoding="utf-8"
+            )
+            with self.assertRaisesRegex(ValidationError, "inside the project root"):
+                build_context_packet(
+                    {"target_fact_id": "target"},
+                    "theorem_verifier",
+                    outside_graph,
+                    project_root=self.root,
+                )
+
     def test_check_detects_tampering(self) -> None:
         packet = self._build([_fact("target", "PROPOSED")])
         packet["target_fact"]["statement"] = "tampered"
