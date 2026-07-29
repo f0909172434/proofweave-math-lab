@@ -292,6 +292,7 @@ class CollaborationArtifacts:
             "spend": {"actual_usd": None, "actual_cny": None, "http_status": None, "retry_count": 0},
             "fallback": "proofweave_native",
         }
+        record = _redact_collaboration_secrets(record)
         self._validate_result(record)
         require_valid(record, "collab_job_result", SCHEMA_ROOT)
         self._append_record(record)
@@ -325,6 +326,8 @@ class CollaborationArtifacts:
             raise ValidationError("Console output cannot create a VERIFIED research conclusion")
         if status == "completed" and value.get("research_status") not in {"PROPOSED", "COMPUTATIONAL"}:
             raise ValidationError("completed Console results may conclude only PROPOSED or COMPUTATIONAL")
+        if status == "completed" and value.get("evidence_status") != value.get("research_status"):
+            raise ValidationError("completed evidence_status must match research_status")
         if status in {"awaiting_manual", "needs_attention", "COLLAB_UNAVAILABLE"} and value.get("research_status") not in {None, "UNKNOWN"}:
             raise ValidationError(f"{status} must not carry a research conclusion")
         if status == "COLLAB_UNAVAILABLE" and value.get("job_id") is not None:
@@ -349,6 +352,8 @@ class CollaborationArtifacts:
                 raise ValidationError(f"{key} exceeds the per-job existing-balance cap")
         if spend.get("http_status") == 402 and spend.get("retry_count", 0) != 0:
             raise ValidationError("A 402 response must not be retried")
+        if spend.get("http_status") == 402 and status != "needs_attention":
+            raise ValidationError("A 402 response must conclude needs_attention without research evidence")
         if spend.get("retry_count", 0) not in {0, None}:
             raise ValidationError("Retries are forbidden for bounded collaboration jobs")
 
@@ -376,6 +381,8 @@ class CollaborationArtifacts:
             if missing_reviewer:
                 raise ValidationError("Reviewer metadata is missing: " + ", ".join(missing_reviewer))
             if reviewer.get("independent"):
+                if not isinstance(primary, dict):
+                    raise ValidationError("An independent reviewer requires primary model metadata")
                 primary_family = primary.get("model_family")
                 reviewer_family = reviewer.get("model_family")
                 if not primary_family or not reviewer_family or str(reviewer_family).upper() == "UNKNOWN":
@@ -410,12 +417,16 @@ class CollaborationArtifacts:
         normalized = deepcopy(value)
         if normalized["status"] == "needs_review":
             normalized["research_status"] = "OPEN"
+            normalized["evidence_status"] = "OPEN"
         elif normalized["status"] in {"awaiting_manual", "needs_attention", "COLLAB_UNAVAILABLE"}:
             normalized["research_status"] = None
+            normalized["evidence_status"] = "NONE"
         return normalized
 
     def _append_record(self, record: dict[str, Any]) -> None:
         _reject_raw_reasoning(record)
+        if _contains_collaboration_secret(record):
+            raise IntegrityError("Collaboration ledger record contains possible credential material")
         if any(existing.get("event_id") == record["event_id"] for existing in load_jsonl(self.path)):
             raise IntegrityError(f"Duplicate collaboration event_id: {record['event_id']}")
         _append_jsonl(self.path, record)
@@ -445,8 +456,8 @@ class CollaborationArtifacts:
         return {"status": "PASS" if not errors else "FAIL", "records": len(seen), "errors": errors}
 
 
-# Small functional API for scripts and tests.  No CLI command is intentionally
-# registered: prepare/ingest/audit/history are local API operations only.
+# Small functional API shared by scripts, tests, and the local CLI wrappers.
+# These operations prepare and validate artifacts; none calls the Console.
 def prepare(root: Path | str, task_id: str, objective: str, **kwargs: Any) -> dict[str, Any]:
     return CollaborationArtifacts(root).prepare(task_id, objective, **kwargs)
 

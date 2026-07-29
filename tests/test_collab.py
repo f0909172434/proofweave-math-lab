@@ -77,7 +77,13 @@ class CollaborationArtifactTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             artifacts = CollaborationArtifacts(temp)
             artifacts.ingest(result())
-            saved = artifacts.ingest(result(job_id="console-job-2", research_status="COMPUTATIONAL"))
+            saved = artifacts.ingest(
+                result(
+                    job_id="console-job-2",
+                    research_status="COMPUTATIONAL",
+                    evidence_status="COMPUTATIONAL",
+                )
+            )
             self.assertEqual("COMPUTATIONAL", saved["research_status"])
             with self.assertRaises(ValidationError):
                 artifacts.ingest(result(job_id="console-job-3", research_status="VERIFIED"))
@@ -89,8 +95,10 @@ class CollaborationArtifactTests(unittest.TestCase):
             artifacts = CollaborationArtifacts(temp)
             review = artifacts.ingest(result(status="needs_review", research_status="PROPOSED"))
             self.assertEqual("OPEN", review["research_status"])
+            self.assertEqual("OPEN", review["evidence_status"])
             manual = artifacts.ingest(result(job_id="console-job-2", status="awaiting_manual", research_status=None))
             self.assertIsNone(manual["research_status"])
+            self.assertEqual("NONE", manual["evidence_status"])
             with self.assertRaises(ValidationError):
                 artifacts.ingest(result(job_id="console-job-3", status="needs_attention", research_status="PROPOSED"))
 
@@ -119,6 +127,44 @@ class CollaborationArtifactTests(unittest.TestCase):
                 artifacts.ingest(result(spend={"actual_usd": 0.71, "actual_cny": 1.0, "http_status": 200, "retry_count": 0}))
             with self.assertRaises(ValidationError):
                 artifacts.ingest(result(spend={"actual_usd": 0.0, "actual_cny": 0.0, "http_status": 402, "retry_count": 1}))
+            with self.assertRaisesRegex(ValidationError, "must conclude needs_attention"):
+                artifacts.ingest(
+                    result(
+                        spend={
+                            "actual_usd": 0.0,
+                            "actual_cny": 0.0,
+                            "http_status": 402,
+                            "retry_count": 0,
+                        }
+                    )
+                )
+            with self.assertRaisesRegex(ValidationError, "evidence_status must match"):
+                artifacts.ingest(result(evidence_status="COMPUTATIONAL"))
+            with self.assertRaisesRegex(ValidationError, "primary model metadata"):
+                artifacts.ingest(
+                    result(
+                        status="needs_attention",
+                        research_status=None,
+                        primary=None,
+                        reviewer={
+                            "provider": "review-provider",
+                            "model": "review-model",
+                            "model_family": "review-family",
+                            "independent": True,
+                        },
+                    )
+                )
+
+    def test_internal_attention_record_redacts_secret_like_summary(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            saved = CollaborationArtifacts(temp).needs_attention(
+                "restricted-1",
+                "provider api_key=super-secret-value",
+                requested_profile="max",
+                context_packet_digest=self.digest,
+            )
+            self.assertIn("[REDACTED]", saved["summary"])
+            self.assertNotIn("super-secret-value", saved["summary"])
 
     def test_unavailable_record_has_no_fabricated_job_id_and_ledger_is_append_only(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
