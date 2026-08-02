@@ -535,8 +535,14 @@ def _materialize_items(
         elif isinstance(value, str):
             candidate = Path(value)
             rooted = candidate if candidate.is_absolute() else root / candidate
-            if rooted.is_file():
-                path = rooted
+            try:
+                if rooted.is_file():
+                    path = rooted
+            except OSError:
+                # Inline content can be far longer than a platform's path limit.
+                # Older Python versions propagate that filesystem error from
+                # Path.is_file(), while newer versions return False.
+                path = None
         if path is not None:
             path = _confine_path(path, root, kind)
             raw, parsed, format_name = _read_path(path)
