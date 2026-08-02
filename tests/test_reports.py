@@ -106,7 +106,7 @@ class StatusReportTests(unittest.TestCase):
 
 class ManuscriptManifestTests(unittest.TestCase):
     def _manifest_root(self, directory: str) -> Path:
-        root = Path(directory)
+        root = Path(directory).resolve()
         paper = root / "paper"
         paper.mkdir(parents=True)
         (paper / "references.bib").write_text("% shared bibliography\n", encoding="utf-8")
