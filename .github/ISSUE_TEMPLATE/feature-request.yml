@@ -1,0 +1,39 @@
+name: Feature request
+description: Propose a bounded improvement without weakening truth or privacy gates.
+title: "[Feature]: "
+labels: [enhancement, triage]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the user need without prescribing a large implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include inputs, outputs, and compatibility expectations.
+    validations:
+      required: true
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Truth, security, and privacy boundaries
+      description: Explain whether this touches claim status, external tools, data transmission, credentials, or cost.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: contract
+    attributes:
+      label: Contract
+      options:
+        - label: This proposal does not treat model agreement or computation as proof.
+          required: true
+        - label: This proposal does not silently break existing CLI or schema contracts.
+          required: true

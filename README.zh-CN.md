@@ -1,6 +1,6 @@
 # ProofWeave（证明织网）
 
-[繁體中文](README.md) | [简体中文](README.zh-CN.md) | [English](README.en.md) | [日本語](README.ja.md)
+[繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md) | [English](README.md) | [日本語](README.ja.md)
 
 **把命题、证据与独立验证织成一套可审计的数学研究流程。**
 
@@ -191,13 +191,13 @@ python -m unittest discover -s tests -v
 python -m mathlab release-check
 ```
 
-在当前 Codex Windows 桌面环境中，已经验证的 Python 随 Codex 提供，而 Windows 的裸 `python` 别名未必可靠。等效命令如下：
+在 Windows 上，如果裸 `python` 别名没有指向 Python 3.11 或更高版本，
+请使用 Python 启动器；将下面的 `3.12` 换成你已安装的受支持版本：
 
 ```powershell
-$py = 'C:\Users\user\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
-& $py -m mathlab status
-& $py -m unittest discover -s tests -v
-& $py -m mathlab release-check
+py -3.12 -m mathlab status
+py -3.12 -m unittest discover -s tests -v
+py -3.12 -m mathlab release-check
 ```
 
 实验检查会把复现命令开头的 `python`、`python3` 或 `py` 解析为正在执行 ProofWeave 的解释器。

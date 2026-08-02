@@ -9,7 +9,7 @@ description = "ProofWeave: model-independent, auditable mathematics research inf
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
-authors = [{name = "ProofWeave contributors"}]
+authors = [{name = "Wang Chih Kai"}]
 dependencies = []
 
 [project.scripts]

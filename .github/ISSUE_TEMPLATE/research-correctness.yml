@@ -1,0 +1,53 @@
+name: Research correctness concern
+description: Flag a potentially incorrect claim, dependency, source, or status without promoting a replacement.
+title: "[Correctness]: "
+labels: [research-integrity, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        An issue is evidence for review, not a truth-status change. Use private
+        vulnerability reporting if disclosure would expose sensitive material
+        or a repeatable integrity bypass.
+  - type: input
+    id: fact
+    attributes:
+      label: Fact ID or artifact path
+    validations:
+      required: true
+  - type: dropdown
+    id: concern
+    attributes:
+      label: Concern type
+      options:
+        - Statement or hidden assumption
+        - Proof gap
+        - Invalid dependency
+        - Source or citation mismatch
+        - Numerical reproducibility
+        - Truth-status or verifier-independence bypass
+        - Manuscript mismatch
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Reproducible evidence
+      description: Give exact locations, assumptions, and the smallest failing step.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Possible downstream impact
+      description: List known dependent facts, experiments, or manuscript locations without changing them.
+  - type: checkboxes
+    id: status
+    attributes:
+      label: Status boundary
+      options:
+        - label: I understand that this report does not verify, revoke, or replace a fact by itself.
+          required: true
+        - label: I removed credentials, personal data, and private research.
+          required: true

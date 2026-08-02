@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: https://github.com/f0909172434/proofweave-math-lab/security/advisories/new
+    about: Report vulnerabilities privately; never post secrets or exploit details in an issue.
+  - name: User guide
+    url: https://github.com/f0909172434/proofweave-math-lab/blob/main/docs/user_guide.md
+    about: Check onboarding, troubleshooting, and CLI guidance before filing an issue.

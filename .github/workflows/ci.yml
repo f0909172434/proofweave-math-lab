@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUTF8: "1"
+
+jobs:
+  tests:
+    name: Tests (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: "3.11"
+          - os: ubuntu-latest
+            python: "3.14"
+          - os: windows-latest
+            python: "3.12"
+          - os: macos-latest
+            python: "3.12"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: Install editable package
+        run: python -m pip install --disable-pip-version-check --no-deps --editable .
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Check fact graph
+        run: python -m mathlab graph-check
+
+  release-contract:
+    name: Release contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install editable package
+        run: python -m pip install --disable-pip-version-check --no-deps --editable .
+      - name: Check repository adoption baseline
+        run: python -m scripts.check_repository_baseline
+      - name: Check project structure
+        run: python -m scripts.validate_project --quick
+      - name: Check release contract without writing tracked reports
+        run: python -m scripts.release_check
+
+  ci-gate:
+    name: ci-gate
+    if: ${{ always() }}
+    needs: [tests, release-contract]
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Confirm required jobs passed
+        env:
+          TESTS_RESULT: ${{ needs.tests.result }}
+          RELEASE_RESULT: ${{ needs.release-contract.result }}
+        run: |
+          if [[ "$TESTS_RESULT" != "success" || "$RELEASE_RESULT" != "success" ]]; then
+            echo "Required CI jobs did not pass."
+            exit 1
+          fi
