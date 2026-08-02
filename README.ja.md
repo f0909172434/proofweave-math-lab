@@ -1,6 +1,6 @@
 # ProofWeave（証明の織物）
 
-[繁體中文](README.md) | [简体中文](README.zh-CN.md) | [English](README.en.md) | [日本語](README.ja.md)
+[繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md) | [English](README.md) | [日本語](README.ja.md)
 
 **主張・証拠・独立検証を織り合わせた、監査可能な数学研究基盤。**
 
@@ -193,13 +193,14 @@ python -m unittest discover -s tests -v
 python -m mathlab release-check
 ```
 
-現在の Codex Windows デスクトップ環境では、検証済み Python は Codex に同梱されており、Windows の裸の `python` エイリアスは信頼できない場合があります。同等の検証済みコマンドは次のとおりです：
+Windows で裸の `python` エイリアスが Python 3.11 以降を指さない場合は、
+Python ランチャーを使用してください。以下の `3.12` は、インストール済みの
+対応バージョンに置き換えられます：
 
 ```powershell
-$py = 'C:\Users\user\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
-& $py -m mathlab status
-& $py -m unittest discover -s tests -v
-& $py -m mathlab release-check
+py -3.12 -m mathlab status
+py -3.12 -m unittest discover -s tests -v
+py -3.12 -m mathlab release-check
 ```
 
 実験ゲートは、記録された再現コマンドの先頭にある `python`、`python3`、`py` を、ProofWeave を実行中のインタープリターへ解決します。

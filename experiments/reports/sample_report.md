@@ -15,8 +15,7 @@ The script checks that the supplied config exists, prints a JSON PASS record and
 ## Reproduction
 
 ```powershell
-$py = 'C:\Users\user\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe'
-& $py experiments/scripts/sample_experiment.py --config experiments/configs/sample_experiment.yml
+py -3.12 experiments/scripts/sample_experiment.py --config experiments/configs/sample_experiment.yml
 ```
 
 ## Limits of inference

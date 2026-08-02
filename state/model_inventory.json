@@ -292,7 +292,7 @@
     "python": {
       "evidence": "exit=0",
       "installed": true,
-      "path": "C:\\Users\\user\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "path": "UNKNOWN",
       "version": "Python 3.12.13"
     },
     "xelatex": {

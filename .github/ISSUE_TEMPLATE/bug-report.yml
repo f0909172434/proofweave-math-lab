@@ -1,0 +1,64 @@
+name: Bug report
+description: Report a reproducible software or documentation defect.
+title: "[Bug]: "
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include credentials, private research, or vulnerability details.
+        Use the private security-reporting link for security issues.
+  - type: input
+    id: commit
+    attributes:
+      label: Affected commit
+      description: Paste the full commit SHA or release tag.
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.11.9"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Minimal reproduction
+      description: List exact steps and sanitized inputs.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and output
+      description: Remove tokens, private paths, personal data, and unpublished research.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed secrets, personal data, private research, and sensitive paths.
+          required: true
+        - label: This is not a private security report.
+          required: true
