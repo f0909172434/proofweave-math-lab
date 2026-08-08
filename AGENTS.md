@@ -1,43 +1,13 @@
-# ProofWeave agent instructions
+# ProofWeave Core v2 instructions
 
-Read and obey these canonical documents before substantive work:
+Read `docs/v2_refactor.md` before changing the runtime.
 
-- `docs/mathematical_quality_standard.md`
-- `docs/agent_contracts.md`
-- `docs/model_routing_guide.md`
+- Certification must preserve statement, assumptions, quantifiers, and dependencies.
+- `CERTIFIED` requires a deterministic certificate and 100% deductive coverage.
+- Claim and proof dependencies must be acyclic.
+- The runtime must not call models or import `tools/migrate_v1.py`.
+- Keep exactly four CLI commands, at most ten production modules and three schemas.
+- Do not reintroduce agents, workflows, providers, routers, reviewer loops, or legacy shims.
 
-The role definition in `agents/<role>.md` is authoritative. Native agent files
-are adapters only and must not duplicate or weaken it.
-
-## Non-negotiable rules
-
-- `state/fact_graph.jsonl` is the formal truth layer. Research notes, model
-  output, numerical scans and consensus are not truth.
-- Only an independent `theorem_verifier` may promote a PROPOSED claim to
-  VERIFIED, and never a claim it authored. The verifier receives the submitted
-  statement, proof, assumptions, VERIFIED dependencies and opened sources, not
-  hidden worker reasoning.
-- Return UNCERTAIN when proof is incomplete. Never convert confidence, voting,
-  absence of counterexamples or numerical evidence into proof.
-- Preserve failed routes, rejected claims and revocations. Revocation must audit
-  every transitive descendant and affected manuscript/experiment location.
-- A writer may use VERIFIED facts but may not invent mathematics or silently
-  strengthen statements.
-- Use parallel agents only for genuinely independent work with non-overlapping
-  write scopes. Keep dependency-heavy work sequential.
-- Do not expose secrets or run paid probes. External model/API execution,
-  publishing, pushing, uploading and messaging require explicit authorization.
-
-## Development and validation
-
-Use the bundled Python 3.12+ or any Python 3.11+ runtime. The project has no
-mandatory third-party runtime dependency.
-
-```powershell
-python -m unittest discover -s tests -v
-python -m mathlab graph-check
-python -m mathlab release-check
-```
-
-Change canonical sources, not generated/native adapter copies. Keep JSONL one
-valid object per line and use UTF-8.
+Validate with `py -3.14 -m unittest discover -s tests -v` and
+`py -3.14 -m proofweave check`. Both commands must leave tracked files unchanged.

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofweave.local/schemas/proof_ir.schema.json",
+  "title": "ProofWeave semantic proof IR",
+  "type": "object",
+  "required": ["schema_version", "claim_id", "statement_hash", "nodes"],
+  "properties": {
+    "schema_version": {"const": 2},
+    "claim_id": {"type": "string"},
+    "statement_hash": {"type": "string"},
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "text", "depends_on", "source_span", "certificate"],
+        "properties": {
+          "id": {"type": "string"},
+          "role": {"enum": ["semantic", "bridge", "computational", "alias"]},
+          "text": {"type": "string"},
+          "depends_on": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "alias_of": {"type": ["string", "null"]},
+          "source_span": {"type": "object"},
+          "certificate": {"type": ["object", "null"]}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

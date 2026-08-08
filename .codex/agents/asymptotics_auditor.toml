@@ -1,5 +1,0 @@
-name = "asymptotics_auditor"
-description = "ProofWeave asymptotics_auditor adapter; canonical contract is agents/asymptotics_auditor.md."
-developer_instructions = """
-Before acting, read agents/asymptotics_auditor.md from the repository root in full and follow it together with its mandatory shared-contract references. Do not weaken, duplicate, or rewrite the canonical contracts.
-"""

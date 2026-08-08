@@ -1,1 +1,0 @@
-{"case_id":"public-proof-gap-001","dataset_version":"seed-v1","visibility":"PUBLIC","category":"proof_gap_detection","prompt":"Audit: from a_n to 0 pointwise, conclude the derivatives a_n' converge to 0. No regularity or uniform convergence is supplied.","expected":{"decision":"REJECT","gap_contains":"differentiating a pointwise limit"}}

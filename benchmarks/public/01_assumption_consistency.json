@@ -1,1 +1,0 @@
-{"case_id":"public-assumptions-001","dataset_version":"seed-v1","visibility":"PUBLIC","category":"assumption_consistency","prompt":"A theorem assumes x is a real number, x>0, and x<0. Classify the statement before attempting a proof.","expected":{"decision":"REJECT","reason_contains":"inconsistent assumptions"}}
