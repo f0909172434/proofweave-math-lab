@@ -68,3 +68,20 @@ tactic = "ring"
 - ProofWeave 不宣稱產生 global simplest proof，也不證明自然語言命題與 Lean target 的語義等價。
 
 v1 資料可用 `py -3.14 -m tools.migrate_v1 OLD_FACT_GRAPH --root .` 一次性搬運；v1 的人工 `VERIFIED` 一律遷移為 `UNVERIFIED`。
+
+## 測試與論文證據
+
+開發測試使用固定的 test-only dependencies，不會增加 runtime dependency：
+
+```powershell
+py -3.14 -m pip install -e . -r requirements-test.txt
+py -3.14 -m coverage run -m unittest discover -s tests -v
+py -3.14 -m coverage report --fail-under=90 --show-missing
+py -3.14 -m proofweave check
+py -3.14 -m tools.evaluate core --output artifacts/evaluation
+py -3.14 -m tools.evaluate pack PACK.toml --output artifacts/evaluation
+```
+
+CI 在 Python 3.11/3.14 與 Ubuntu/Windows 上執行快速測試，並在兩個平台使用固定的 Lean/Mathlib 做真實認證。手動 workflow 產生候選證據；`v*.*.*` tag 只建立 draft release，不會自動發布。
+
+有限 corpus 的結果只是 `COMPUTATIONAL`，coverage 也不是 soundness 證明。單一 Lean certificate 只證明它的 formal target；自然語言 alignment 需要 hash-bound 人工確認。文獻搜尋「未找到解答」不等於證明問題仍開放或具有新穎性。Evidence-pack schema v1 對 `VERIFIED` 一律 fail closed，直到未來 schema 能綁定冷啟動重播、新穎性複查與獨立審查證據。詳見 [評估協定](docs/evaluation_protocol.md) 與 [claim–evidence matrix](docs/claim_evidence_matrix.md)。

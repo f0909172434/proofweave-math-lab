@@ -1,0 +1,177 @@
+name: Evidence snapshot
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    name: Evaluate / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    env:
+      PROOFWEAVE_REQUIRE_LEAN: "1"
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python 3.14
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.14"
+          cache: pip
+          cache-dependency-path: requirements-test.txt
+      - name: Install pinned Lean and Mathlib
+        uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9 # v1.5.0
+        with:
+          auto-config: false
+          use-mathlib-cache: true
+      - name: Install Core and test-only dependencies
+        run: python -m pip install --disable-pip-version-check -e . -r requirements-test.txt
+      - name: Run full suite with real Lean and no permitted skips
+        run: python -m coverage run -m unittest discover -s tests -v
+      - name: Enforce 90 percent coverage
+        run: python -m coverage report --fail-under=90 --show-missing
+      - name: Build evidence bundle
+        run: python -m tools.evaluate core --output artifacts/evaluation
+      - name: Prove evaluation did not edit tracked files
+        run: git diff --exit-code
+      - name: Upload platform evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: core-evidence-${{ runner.os }}
+          path: artifacts/evaluation/
+          if-no-files-found: error
+          retention-days: 30
+
+  aggregate:
+    name: Compare and aggregate evidence
+    needs: evaluate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python 3.14
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.14"
+      - name: Download platform evidence
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: core-evidence-*
+          path: gathered
+      - name: Verify checksums and normalized cross-platform equality
+        shell: bash
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import json
+          import zipfile
+          from pathlib import Path
+
+          gathered = Path("gathered")
+          roots = sorted(path for path in gathered.iterdir() if path.is_dir())
+          expected = {"core-evidence-Linux", "core-evidence-Windows"}
+          if {path.name for path in roots} != expected:
+              raise SystemExit(f"expected {sorted(expected)}, found {[path.name for path in roots]}")
+
+          normalized = []
+          for root in roots:
+              for line in (root / "SHA256SUMS").read_text(encoding="utf-8").splitlines():
+                  digest, relative = line.split("  ", 1)
+                  target = (root / relative).resolve()
+                  if root.resolve() not in target.parents or not target.is_file():
+                      raise SystemExit(f"unsafe or missing checksum path: {relative}")
+                  observed = hashlib.sha256(target.read_bytes()).hexdigest()
+                  if observed != digest:
+                      raise SystemExit(f"checksum mismatch: {root.name}/{relative}")
+              report = json.loads((root / "evaluation.json").read_text(encoding="utf-8"))
+              if report.get("result") != "PASS":
+                  raise SystemExit(f"evaluation failed on {root.name}")
+              normalized.append(report["normalized"])
+
+          if normalized[0] != normalized[1]:
+              raise SystemExit("Linux and Windows normalized evidence differ")
+
+          release = Path("release")
+          release.mkdir()
+          canonical = json.dumps(normalized[0], ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+          (release / "normalized-evaluation.json").write_text(canonical, encoding="utf-8", newline="\n")
+
+          for root in roots:
+              archive = release / f"proofweave-{root.name}.zip"
+              with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as bundle:
+                  for source in sorted(path for path in root.rglob("*") if path.is_file()):
+                      name = f"{root.name}/{source.relative_to(root).as_posix()}"
+                      info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+                      info.create_system = 3
+                      info.external_attr = 0o100644 << 16
+                      bundle.writestr(info, source.read_bytes(), compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
+
+          sums = []
+          for path in sorted(item for item in release.iterdir() if item.is_file()):
+              sums.append(f"{hashlib.sha256(path.read_bytes()).hexdigest()}  {path.name}")
+          (release / "SHA256SUMS").write_text("\n".join(sums) + "\n", encoding="utf-8", newline="\n")
+          PY
+      - name: Upload candidate or release evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: proofweave-evidence-${{ github.ref_name }}-${{ github.run_id }}
+          path: release/
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Attest and draft release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: aggregate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - name: Download aggregated evidence
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: proofweave-evidence-${{ github.ref_name }}-${{ github.run_id }}
+          path: release
+      - name: Attest tagged evidence provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: release/*
+      - name: Create or update draft release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft > release-state.txt 2>/dev/null; then
+            if ! grep -qx true release-state.txt; then
+              echo "Refusing to modify an already-published release" >&2
+              exit 1
+            fi
+            gh release upload "$RELEASE_TAG" release/* --clobber
+          else
+            gh release create "$RELEASE_TAG" release/* \
+              --draft \
+              --verify-tag \
+              --title "$RELEASE_TAG evidence" \
+              --notes "Draft only. Human review is required before publication."
+          fi

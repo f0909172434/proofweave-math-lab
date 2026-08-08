@@ -1,0 +1,12 @@
+schema_version = 1
+pack_id = "PW-PACK-TEMPLATE-01"
+title = "Minimal hash-bound theorem evidence pack"
+sources = ["Template demonstration; replace with primary and independent sources."]
+research_status = "OPEN"
+dependencies = []
+
+[[claims]]
+id = "pack-template-claim"
+path = "claims/theorem.md"
+expected_proof_status = "CERTIFIED"
+alignment_attestation = "alignment/pack-template-claim.toml"

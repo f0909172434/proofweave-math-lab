@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from proofweave.certifiers.lean import environment_fingerprint, run_batch
@@ -23,6 +24,8 @@ class LeanBackendTests(ProjectCase):
     def test_pinned_mathlib_true_and_false_algebra(self) -> None:
         repository = Path(__file__).resolve().parents[1]
         if not environment_fingerprint(repository)["available"]:
+            if os.environ.get("PROOFWEAVE_REQUIRE_LEAN") == "1":
+                self.fail("PROOFWEAVE_REQUIRE_LEAN=1 but pinned Lean/Mathlib is unavailable")
             self.skipTest("Pinned Mathlib cache is not installed")
         result = run_batch(repository, [
             {"id": "true", "target": "forall x : Int, (x + 1)^2 = x^2 + 2*x + 1", "tactic": "ring", "exact": None},

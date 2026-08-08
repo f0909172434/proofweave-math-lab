@@ -27,3 +27,20 @@ Inputs use TOML front matter for ID, assumptions, quantifiers, and dependencies,
 The Lean allowlist is `ring`, `ring_nf`, `norm_num`, `linarith`, `nlinarith`, `positivity`, and restricted `exact`. Arbitrary commands/imports, `sorry`, `admit`, custom axioms, unsafe meta execution, `run_tac`, and `native_decide` are rejected. Missing Lean/Mathlib yields `PARTIAL/HOST_LIMITED`.
 
 ProofWeave does not claim a globally simplest proof and does not automatically prove semantic equivalence between natural language and Lean. Migrate v1 data once with `py -3.14 -m tools.migrate_v1 OLD_FACT_GRAPH --root .`; v1 human `VERIFIED` records become `UNVERIFIED`.
+
+## Tests and paper evidence
+
+Development tests use pinned test-only dependencies and add no runtime dependency:
+
+```powershell
+py -3.14 -m pip install -e . -r requirements-test.txt
+py -3.14 -m coverage run -m unittest discover -s tests -v
+py -3.14 -m coverage report --fail-under=90 --show-missing
+py -3.14 -m proofweave check
+py -3.14 -m tools.evaluate core --output artifacts/evaluation
+py -3.14 -m tools.evaluate pack PACK.toml --output artifacts/evaluation
+```
+
+CI runs the fast suite on Python 3.11/3.14 and Ubuntu/Windows, then performs real certification with the pinned Lean/Mathlib on both platforms. The manual workflow produces candidate evidence; a `v*.*.*` tag creates a draft release only and never publishes it automatically.
+
+Finite-corpus results are `COMPUTATIONAL`, and coverage is not a soundness proof. A Lean certificate proves only its formal target; natural-language alignment requires a hash-bound human attestation. Failure to find a published solution does not prove that a problem remains open or that a result is novel. Evidence-pack schema v1 fails closed on `VERIFIED` until a future schema can bind cold replay, novelty recheck, and independent-review evidence. See the [evaluation protocol](docs/evaluation_protocol.md) and [claim–evidence matrix](docs/claim_evidence_matrix.md).
