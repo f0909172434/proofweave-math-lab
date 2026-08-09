@@ -23,6 +23,7 @@ BANNED = re.compile(
 )
 PINNED_TOOLCHAIN = re.compile(r"leanprover/lean4:v([0-9]+\.[0-9]+\.[0-9]+)")
 LEAN_VERSION = re.compile(r"Lean \(version ([0-9]+\.[0-9]+\.[0-9]+)(?:, [^)]*)?\)")
+VERSION_PROBE_TIMEOUT = 60
 
 
 def _toolchain_directory(root: Path) -> Path | None:
@@ -305,7 +306,7 @@ def run_batch(root: Path, specs: list[dict[str, Any]], *, timeout: int = 300) ->
                 text=True,
                 encoding="utf-8",
                 errors="replace",
-                timeout=10,
+                timeout=VERSION_PROBE_TIMEOUT,
                 check=False,
             )
             version_text = (version.stdout or version.stderr).strip()

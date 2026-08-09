@@ -223,6 +223,26 @@ class LeanBoundaryTests(ProjectCase):
             self.assertIsNone(result["toolchain_version"])
             self.assertEqual(1, mocked_run.call_count)
 
+    def test_version_probe_timeout_is_fail_closed_before_compile(self) -> None:
+        environment = {
+            "available": True, "lake_path": "lake", "expected_version": "4.32.1",
+            "fingerprint": "x", "files": {},
+        }
+        spec = {"id": "goal", "target": "True", "tactic": "norm_num", "exact": None}
+        with patch(
+            "proofweave.certifiers.lean.environment_fingerprint", return_value=environment
+        ), patch(
+            "proofweave.certifiers.lean.subprocess.run",
+            side_effect=subprocess.TimeoutExpired(["lake", "env", "lean", "--version"], 60),
+        ) as mocked_run:
+            result = lean.run_batch(self.root, [spec])
+        self.assertEqual("HOST_LIMITED", result["outcome"])
+        self.assertEqual("HOST_LIMITED", result["results"]["goal"])
+        self.assertEqual([{"message": "TimeoutExpired"}], result["diagnostics"])
+        self.assertEqual(1, mocked_run.call_count)
+        self.assertEqual(60, lean.VERSION_PROBE_TIMEOUT)
+        self.assertEqual(lean.VERSION_PROBE_TIMEOUT, mocked_run.call_args.kwargs["timeout"])
+
 
 class PipelineIntegrityBoundaryTests(ProjectCase):
     def test_alignment_revocation_duplicate_active_and_cache_digest_boundaries(self) -> None:
