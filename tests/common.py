@@ -24,7 +24,7 @@ class FakeRunner:
         }
         return {
             "outcome": "FAILED" if "FAILED" in results.values() else "PASSED" if specs else "UNSUPPORTED",
-            "toolchain_version": "Lean (test 4.32.1)",
+            "toolchain_version": "Lean (test 4.32.2)",
             "environment": environment_fingerprint(root),
             "results": results,
             "diagnostics": [],

@@ -19,7 +19,7 @@ class LeanBackendTests(ProjectCase):
     def test_environment_fingerprint_accepts_posix_toolchain_names(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            (root / "lean-toolchain").write_text("leanprover/lean4:v4.32.1", encoding="utf-8")
+            (root / "lean-toolchain").write_text("leanprover/lean4:v4.32.2", encoding="utf-8")
             for name in ("lakefile.toml", "lake-manifest.json"):
                 (root / name).write_text(name, encoding="utf-8")
             (root / ".lake" / "packages" / "mathlib").mkdir(parents=True)
@@ -44,7 +44,7 @@ class LeanBackendTests(ProjectCase):
     def test_environment_fingerprint_rejects_unpinned_path_shims(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            (root / "lean-toolchain").write_text("leanprover/lean4:v4.32.1", encoding="utf-8")
+            (root / "lean-toolchain").write_text("leanprover/lean4:v4.32.2", encoding="utf-8")
             for name in ("lakefile.toml", "lake-manifest.json"):
                 (root / name).write_text(name, encoding="utf-8")
             (root / ".lake" / "packages" / "mathlib").mkdir(parents=True)
@@ -61,7 +61,7 @@ class LeanBackendTests(ProjectCase):
     def test_environment_fingerprint_uses_toolchain_lake_without_path_shim(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            (root / "lean-toolchain").write_text("leanprover/lean4:v4.32.1", encoding="utf-8")
+            (root / "lean-toolchain").write_text("leanprover/lean4:v4.32.2", encoding="utf-8")
             for name in ("lakefile.toml", "lake-manifest.json"):
                 (root / name).write_text(name, encoding="utf-8")
             (root / ".lake" / "packages" / "mathlib").mkdir(parents=True)
@@ -89,7 +89,7 @@ class LeanBackendTests(ProjectCase):
     def test_environment_fingerprint_binds_library_and_dependency_content(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            (root / "lean-toolchain").write_text("leanprover/lean4:v4.32.1", encoding="utf-8")
+            (root / "lean-toolchain").write_text("leanprover/lean4:v4.32.2", encoding="utf-8")
             for name in ("lakefile.toml", "lake-manifest.json"):
                 (root / name).write_text(name, encoding="utf-8")
             (root / ".lake" / "packages" / "mathlib").mkdir(parents=True)
@@ -140,7 +140,7 @@ class LeanBackendTests(ProjectCase):
                             "scope": "leanprover-community",
                             "url": "https://github.com/leanprover-community/mathlib4",
                             "rev": revision,
-                            "inputRev": "v4.32.1",
+                            "inputRev": "v4.32.2",
                         }],
                     }
                     (root / "lake-manifest.json").write_text(
@@ -160,7 +160,7 @@ class LeanBackendTests(ProjectCase):
                     "scope": "leanprover-community",
                     "url": "https://github.com/leanprover-community/mathlib4",
                     "rev": revision,
-                    "inputRev": "v4.32.1",
+                    "inputRev": "v4.32.2",
                 }],
             }
             (root / "lake-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")

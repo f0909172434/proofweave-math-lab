@@ -99,7 +99,7 @@ tactic = "norm_num"
         runner = FakeRunner()
         path = self.theorem()
         first = run_proof(path, root=self.root, runner=runner)
-        (self.root / "lean-toolchain").write_text("leanprover/lean4:v4.32.1\n", encoding="utf-8")
+        (self.root / "lean-toolchain").write_text("leanprover/lean4:v4.32.2\n", encoding="utf-8")
         second = run_proof(path, root=self.root, runner=runner)
         self.assertNotEqual(first["cache_key"], second["cache_key"])
         self.assertEqual(2, runner.calls)

@@ -189,7 +189,7 @@ class LeanBoundaryTests(ProjectCase):
         self.assertEqual(2, len(diagnostics))
         self.assertTrue(unlocated)
         environment = {
-            "available": True, "lake_path": "lake", "expected_version": "4.32.1",
+            "available": True, "lake_path": "lake", "expected_version": "4.32.2",
             "fingerprint": "x", "files": {},
         }
         spec = {"id": "goal", "target": "True", "tactic": "norm_num", "exact": None}
@@ -202,7 +202,7 @@ class LeanBoundaryTests(ProjectCase):
 
     def test_version_failure_or_mismatch_is_host_limited_before_compile(self) -> None:
         environment = {
-            "available": True, "lake_path": "lake", "expected_version": "4.32.1",
+            "available": True, "lake_path": "lake", "expected_version": "4.32.2",
             "fingerprint": "x", "files": {},
         }
         spec = {"id": "goal", "target": "True", "tactic": "norm_num", "exact": None}
@@ -225,7 +225,7 @@ class LeanBoundaryTests(ProjectCase):
 
     def test_version_probe_timeout_is_fail_closed_before_compile(self) -> None:
         environment = {
-            "available": True, "lake_path": "lake", "expected_version": "4.32.1",
+            "available": True, "lake_path": "lake", "expected_version": "4.32.2",
             "fingerprint": "x", "files": {},
         }
         spec = {"id": "goal", "target": "True", "tactic": "norm_num", "exact": None}

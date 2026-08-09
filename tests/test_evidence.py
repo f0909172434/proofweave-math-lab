@@ -43,7 +43,7 @@ def evidence_backend(root: Path, specs: list[dict[str, object]]) -> dict[str, ob
     source = "\n".join(f"-- {spec['id']}" for spec in specs) + ("\n" if specs else "")
     return {
         "outcome": outcome,
-        "toolchain_version": "Lean (test 4.32.1)",
+        "toolchain_version": "Lean (test 4.32.2)",
         "environment": {"fingerprint": "a" * 64},
         "results": results,
         "diagnostics": [],
