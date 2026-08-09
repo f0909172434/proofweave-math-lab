@@ -1,0 +1,299 @@
+schema_version = 1
+
+# Fourteen valid obligations: two per allowlisted tactic. The exact cases reuse
+# an earlier valid theorem, which also exercises declaration-order binding.
+[[cases]]
+id = "PW-POS-RING-01"
+category = "positive"
+tactic = "ring"
+target = "forall x : Int, (x + 1)^2 = x^2 + 2*x + 1"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-RING-02"
+category = "positive"
+tactic = "ring"
+target = "forall x : Int, (x + 2)*(x + 2) = x^2 + 4*x + 4"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-RINGNF-01"
+category = "positive"
+tactic = "ring_nf"
+target = "forall x : Rat, (x + 3)^2 = x^2 + 6*x + 9"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-RINGNF-02"
+category = "positive"
+tactic = "ring_nf"
+target = "forall x y : Rat, (x + y)^2 = x^2 + 2*x*y + y^2"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-NORMNUM-01"
+category = "positive"
+tactic = "norm_num"
+target = "(2 + 3 : Int) = 5"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-NORMNUM-02"
+category = "positive"
+tactic = "norm_num"
+target = "(7 : Nat) > 3"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-LINARITH-01"
+category = "positive"
+tactic = "linarith"
+target = "forall x y : Real, x = y -> x + 1 = y + 1"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-LINARITH-02"
+category = "positive"
+tactic = "linarith"
+target = "forall x : Real, x >= 5 -> x >= 3"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-NLINARITH-01"
+category = "positive"
+tactic = "nlinarith"
+target = "forall x : Real, 0 <= x^2"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-NLINARITH-02"
+category = "positive"
+tactic = "nlinarith"
+target = "forall x : Real, 0 <= (x - 1)^2"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-POSITIVITY-01"
+category = "positive"
+tactic = "positivity"
+target = "forall x : Real, 0 <= x^2"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-POSITIVITY-02"
+category = "positive"
+tactic = "positivity"
+target = "(0 : Real) < 3"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-EXACT-01"
+category = "positive"
+tactic = "exact"
+target = "(2 + 3 : Int) = 5"
+exact = "PW-POS-NORMNUM-01"
+expected = "PASSED"
+
+[[cases]]
+id = "PW-POS-EXACT-02"
+category = "positive"
+tactic = "exact"
+target = "forall x : Int, (x + 1)^2 = x^2 + 2*x + 1"
+exact = "PW-POS-RING-01"
+expected = "PASSED"
+
+# Fourteen paired false obligations. A false target must never be certified.
+[[cases]]
+id = "PW-NEG-RING-01"
+category = "negative"
+tactic = "ring"
+target = "forall x : Int, (x + 1)^2 = x^2 + 2*x + 2"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-RING-02"
+category = "negative"
+tactic = "ring"
+target = "forall x : Int, (x + 2)*(x + 2) = x^2 + 4*x + 5"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-RINGNF-01"
+category = "negative"
+tactic = "ring_nf"
+target = "forall x : Rat, (x + 3)^2 = x^2 + 6*x + 10"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-RINGNF-02"
+category = "negative"
+tactic = "ring_nf"
+target = "forall x y : Rat, (x + y)^2 = x^2 + x*y + y^2"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-NORMNUM-01"
+category = "negative"
+tactic = "norm_num"
+target = "(2 + 3 : Int) = 6"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-NORMNUM-02"
+category = "negative"
+tactic = "norm_num"
+target = "(7 : Nat) < 3"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-LINARITH-01"
+category = "negative"
+tactic = "linarith"
+target = "forall x y : Real, x = y -> x + 1 = y + 2"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-LINARITH-02"
+category = "negative"
+tactic = "linarith"
+target = "forall x : Real, x >= 5 -> x >= 6"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-NLINARITH-01"
+category = "negative"
+tactic = "nlinarith"
+target = "forall x : Real, x^2 < 0"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-NLINARITH-02"
+category = "negative"
+tactic = "nlinarith"
+target = "forall x : Real, 1 <= x^2"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-POSITIVITY-01"
+category = "negative"
+tactic = "positivity"
+target = "forall x : Real, x^2 < 0"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-POSITIVITY-02"
+category = "negative"
+tactic = "positivity"
+target = "(3 : Real) < 0"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-EXACT-01"
+category = "negative"
+tactic = "exact"
+target = "(2 + 3 : Int) = 6"
+exact = "PW-POS-NORMNUM-01"
+expected = "FAILED"
+
+[[cases]]
+id = "PW-NEG-EXACT-02"
+category = "negative"
+tactic = "exact"
+target = "forall x : Int, (x + 1)^2 = x^2 + 2*x + 2"
+exact = "PW-POS-RING-01"
+expected = "FAILED"
+
+# Eight escape attempts. REJECTED is preferred; any outcome other than PASSED
+# is fail-closed and therefore acceptable for syntactically invalid propositions.
+[[cases]]
+id = "PW-ATK-SORRY-01"
+category = "attack"
+tactic = "ring"
+target = "True := by sorry"
+expected = "NOT_PASSED"
+
+[[cases]]
+id = "PW-ATK-ADMIT-01"
+category = "attack"
+tactic = "ring"
+target = "True := by admit"
+expected = "NOT_PASSED"
+
+[[cases]]
+id = "PW-ATK-AXIOM-01"
+category = "attack"
+tactic = "ring"
+target = "axiom fabricated : True"
+expected = "NOT_PASSED"
+
+[[cases]]
+id = "PW-ATK-UNSAFE-01"
+category = "attack"
+tactic = "norm_num"
+target = "unsafe True"
+expected = "NOT_PASSED"
+
+[[cases]]
+id = "PW-ATK-META-01"
+category = "attack"
+tactic = "norm_num"
+target = "meta True"
+expected = "NOT_PASSED"
+
+[[cases]]
+id = "PW-ATK-IMPORT-01"
+category = "attack"
+tactic = "norm_num"
+target = "import Mathlib; True"
+expected = "NOT_PASSED"
+
+[[cases]]
+id = "PW-ATK-TACTIC-01"
+category = "attack"
+tactic = "aesop"
+target = "True"
+expected = "NOT_PASSED"
+
+[[cases]]
+id = "PW-ATK-NATIVE-01"
+category = "attack"
+tactic = "native_decide"
+target = "True"
+expected = "NOT_PASSED"
+
+# Six state-machine and integrity failures exercised by evaluator handlers.
+[[cases]]
+id = "PW-FC-PARTIAL-01"
+category = "fail_closed"
+scenario = "partial_unsupported"
+expected = "PARTIAL"
+
+[[cases]]
+id = "PW-FC-HOST-01"
+category = "fail_closed"
+scenario = "host_limited"
+expected = "HOST_LIMITED"
+
+[[cases]]
+id = "PW-FC-STALE-01"
+category = "fail_closed"
+scenario = "stale_alignment"
+expected = "STALE"
+
+[[cases]]
+id = "PW-FC-DEPENDENCY-01"
+category = "fail_closed"
+scenario = "dependency_missing"
+expected = "REJECTED"
+
+[[cases]]
+id = "PW-FC-TAMPER-01"
+category = "fail_closed"
+scenario = "artifact_tamper"
+expected = "RECOMPUTED"
+
+[[cases]]
+id = "PW-FC-DAG-01"
+category = "fail_closed"
+scenario = "dag_cycle"
+expected = "REJECTED"

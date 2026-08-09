@@ -1,102 +1,81 @@
 from __future__ import annotations
 
 import json
+import tempfile
+import unittest
 from pathlib import Path
 from typing import Any
 
-
-def fact(fact_id: str, *, status: str = "PROPOSED", dependencies: list[str] | None = None, created_by: str = "worker") -> dict[str, Any]:
-    return {
-        "fact_id": fact_id,
-        "title": fact_id,
-        "statement": f"Statement {fact_id}",
-        "normalized_statement": f"statement-{fact_id}",
-        "kind": "lemma",
-        "assumptions": ["explicitly no extra assumptions"],
-        "quantifiers": ["for every admissible input"],
-        "mathematical_domain": "test",
-        "proof": "A complete test proof packet.",
-        "dependencies": dependencies or [],
-        "source_dependencies": [],
-        "created_by": created_by,
-        "status": status,
-    }
+from proofweave.certifiers.lean import environment_fingerprint
+from proofweave.pipeline import initialize
 
 
-def accept_report(
-    fact_id: str,
-    verifier: str = "verifier",
-    *,
-    dependencies: list[str] | None = None,
-    sources: list[str] | None = None,
-) -> dict[str, Any]:
-    return {
-        "verification_id": f"verify-{fact_id}",
-        "fact_id": fact_id,
-        "outcome": "ACCEPT",
-        "verifier": verifier,
-        "verifier_role": "theorem_verifier",
-        "cold_start": True,
-        "dependencies_checked": dependencies or [],
-        "sources_checked": sources or [],
-        "checklist": [{"item": "all steps", "result": "PASS", "note": "checked"}],
-        "created_at": "2026-07-24T00:00:00Z",
-    }
+class FakeRunner:
+    def __init__(self, *, fail: bool = False):
+        self.fail = fail
+        self.calls = 0
+
+    def __call__(self, root: Path, specs: list[dict[str, Any]]) -> dict[str, Any]:
+        if specs:
+            self.calls += 1
+        results = {
+            spec["id"]: "FAILED" if self.fail or "False" in str(spec.get("target")) else "PASSED"
+            for spec in specs
+        }
+        return {
+            "outcome": "FAILED" if "FAILED" in results.values() else "PASSED" if specs else "UNSUPPORTED",
+            "toolchain_version": "Lean (test 4.32.1)",
+            "environment": environment_fingerprint(root),
+            "results": results,
+            "diagnostics": [],
+            "invocations": 1 if specs else 0,
+            "source": "-- deterministic fake certificate\n" if specs else "",
+        }
 
 
-def model(
-    model_id: str,
-    *,
-    status: str = "VERIFIED_AVAILABLE",
-    tier: str = "ADVANCED",
-    provider: str = "host",
-    family: str | None = None,
-    tools: bool = True,
-    context: int | None = None,
-    deprecated: bool = False,
-) -> dict[str, Any]:
-    return {
-        "provider": provider,
-        "model_id": model_id,
-        "display_name": model_id,
-        "aliases": [],
-        "model_family": family or model_id,
-        "availability_status": status,
-        "availability_evidence": "test",
-        "detection_method": "test",
-        "last_checked_at": "2026-07-24T00:00:00Z",
-        "account_verified": status == "VERIFIED_AVAILABLE",
-        "reasoning_support": True,
-        "supported_reasoning_levels": ["low", "medium", "high", "xhigh", "max"],
-        "context_window": context,
-        "max_output_tokens": None,
-        "text_input": True,
-        "image_input": tools,
-        "pdf_input": tools,
-        "structured_output": tools,
-        "tool_calling": tools,
-        "web_search": tools,
-        "file_search": tools,
-        "code_execution": tools,
-        "computer_use": tools,
-        "MCP_support": tools,
-        "streaming": True,
-        "snapshot_support": False,
-        "estimated_input_cost": None,
-        "estimated_output_cost": None,
-        "latency_class": "LOW",
-        "rate_limit_information": "UNKNOWN",
-        "deprecation_status": "DEPRECATED" if deprecated else "ACTIVE",
-        "provider_adapter": "test",
-        "capability_tier": tier,
-        "notes": "test model",
-    }
+class ProjectCase(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.root = Path(self.temporary.name)
+        initialize(self.root)
 
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
 
-def inventory(*models: dict[str, Any]) -> dict[str, Any]:
-    return {"inventory_version": "test-v1", "models": list(models)}
-
-
-def write_json(path: Path, value: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value), encoding="utf-8")
+    def theorem(
+        self,
+        claim_id: str = "claim",
+        *,
+        statement: str = "For every integer x, (x + 1)^2 = x^2 + 2x + 1.",
+        assumptions: list[str] | None = None,
+        quantifiers: list[str] | None = None,
+        dependencies: list[str] | None = None,
+        proof: str = "Expand the square and collect terms.",
+        target: str | None = "∀ x : ℤ, (x + 1)^2 = x^2 + 2*x + 1",
+        tactic: str = "ring",
+    ) -> Path:
+        assumptions = ["x is an integer"] if assumptions is None else assumptions
+        quantifiers = ["for every integer x"] if quantifiers is None else quantifiers
+        dependencies = [] if dependencies is None else dependencies
+        certificate = ""
+        if target is not None:
+            certificate = (
+                "\n## Certificate\n\n```proofweave-lean\n"
+                f"target = {json.dumps(target, ensure_ascii=False)}\n"
+                f"tactic = {json.dumps(tactic)}\n```\n"
+            )
+        text = (
+            "+++\n"
+            f"claim_id = {json.dumps(claim_id)}\n"
+            f"title = {json.dumps(claim_id.title())}\n"
+            f"assumptions = {json.dumps(assumptions, ensure_ascii=False)}\n"
+            f"quantifiers = {json.dumps(quantifiers, ensure_ascii=False)}\n"
+            f"dependencies = {json.dumps(dependencies)}\n"
+            "+++\n\n"
+            f"## Statement\n\n{statement}\n\n"
+            f"## Proof\n\n{proof}\n"
+            f"{certificate}"
+        )
+        path = self.root / f"{claim_id}.md"
+        path.write_text(text, encoding="utf-8", newline="\n")
+        return path

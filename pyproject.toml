@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "proofweave-math-lab"
-version = "0.1.0"
-description = "ProofWeave: model-independent, auditable mathematics research infrastructure"
+name = "proofweave-core"
+version = "2.0.0"
+description = "Minimal deterministic distillation and certification for AI-generated proofs"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
@@ -13,10 +13,10 @@ authors = [{name = "ProofWeave contributors"}]
 dependencies = []
 
 [project.scripts]
-mathlab = "mathlab.cli:main"
+proofweave = "proofweave.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["mathlab*"]
+include = ["proofweave*"]
 
 [tool.unittest]
 start-directory = "tests"

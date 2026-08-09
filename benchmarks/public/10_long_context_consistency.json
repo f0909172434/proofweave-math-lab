@@ -1,1 +1,0 @@
-{"case_id":"public-long-context-001","dataset_version":"seed-v1","visibility":"PUBLIC","category":"long_context_consistency","prompt":"The assumptions section restricts lambda to (0,1), but the conclusion later claims all real lambda. Identify the inconsistency.","expected":{"decision":"CLAIM_STRENGTH_EXCEEDS_ASSUMPTIONS"}}

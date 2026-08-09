@@ -1,0 +1,8 @@
+schema_version = 1
+attestation_id = "PW-ALIGN-TEMPLATE-01"
+claim_id = "pack-template-claim"
+statement_hash = "43d553b498c32767ffa72fc06e44147f4cf565207a61718dd2041718e3fab33f"
+formal_target_hash = "02afa7654c9f89c4b9459bf4830c56ca46870b9a9c2acacf2ecba43a5aa517a5"
+alignment_hash = "1bf99ff4a8bd44dafe675aaf2d0ba61413bfdcdaa43b2e50d6d5fa8163c475be"
+reviewer = "REPLACE-WITH-HUMAN-REVIEWER"
+reviewed_at = "1970-01-01T00:00:00Z"

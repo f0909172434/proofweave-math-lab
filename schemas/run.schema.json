@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proofweave.local/schemas/run.schema.json",
+  "title": "ProofWeave Core run",
+  "type": "object",
+  "required": ["schema_version", "run_id", "claim_id", "source_hash", "statement_hash", "cache_key", "cache_hit", "fast_path", "alignment", "proof_status", "coverage", "certificate", "invocations", "artifacts", "created_at"],
+  "properties": {
+    "schema_version": {"const": 2},
+    "run_id": {"type": "string"},
+    "claim_id": {"type": "string"},
+    "source_hash": {"type": "string"},
+    "statement_hash": {"type": "string"},
+    "cache_key": {"type": "string"},
+    "cache_hit": {"type": "boolean"},
+    "fast_path": {"type": "boolean"},
+    "alignment": {"enum": ["UNCONFIRMED", "CONFIRMED", "STALE"]},
+    "proof_status": {"enum": ["UNVERIFIED", "PARTIAL", "CERTIFIED", "FAILED"]},
+    "coverage": {"type": "object"},
+    "certificate": {"type": "object"},
+    "invocations": {"type": "object"},
+    "artifacts": {"type": "object"},
+    "created_at": {"type": "string"}
+  },
+  "additionalProperties": false
+}

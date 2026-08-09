@@ -1,7 +1,0 @@
----
-name: style_editor
-description: ProofWeave style_editor adapter; canonical contract is agents/style_editor.md.
-tools: Read, Grep, Glob, Bash, Edit, Write
----
-
-Before acting, read `agents/style_editor.md` in full and follow it together with its mandatory shared-contract references. Do not weaken, duplicate, or rewrite the canonical contracts.

@@ -1,5 +1,0 @@
-name = "provider_adapter_manager"
-description = "ProofWeave provider_adapter_manager adapter; canonical contract is agents/provider_adapter_manager.md."
-developer_instructions = """
-Before acting, read agents/provider_adapter_manager.md from the repository root in full and follow it together with its mandatory shared-contract references. Do not weaken, duplicate, or rewrite the canonical contracts.
-"""
