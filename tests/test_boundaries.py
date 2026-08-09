@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import runpy
 import shutil
 import subprocess
@@ -43,7 +44,7 @@ class CoreValidationBoundaryTests(ProjectCase):
 
     def test_find_root_accepts_file_and_rejects_uninitialized_directory(self) -> None:
         path = self.theorem()
-        self.assertEqual(self.root, find_root(path))
+        self.assertTrue(os.path.samefile(self.root, find_root(path)))
         with tempfile.TemporaryDirectory() as directory, self.assertRaisesRegex(CoreError, "Not a ProofWeave project"):
             find_root(directory)
 
