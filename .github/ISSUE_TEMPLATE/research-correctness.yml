@@ -1,0 +1,54 @@
+name: Research correctness concern
+description: Report a potentially incorrect claim, certificate, dependency, alignment, or evidence result.
+title: "[Correctness]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        An issue is evidence for investigation, not a status change. Use private
+        vulnerability reporting when disclosure would expose sensitive material
+        or a repeatable integrity bypass.
+  - type: input
+    id: identity
+    attributes:
+      label: Claim ID, case ID, artifact path, or digest
+    validations:
+      required: true
+  - type: dropdown
+    id: concern
+    attributes:
+      label: Concern type
+      options:
+        - Natural-language and formal-target mismatch
+        - Statement, assumption, or quantifier drift
+        - Invalid or cyclic dependency
+        - Incorrect CERTIFIED or coverage result
+        - STALE or mismatched alignment attestation
+        - Lean import, tactic, axiom, or unsafe escape
+        - Cache-key omission or collision
+        - Artifact, checksum, or bundle tampering
+        - Migration status escalation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Reproducible evidence
+      description: Give exact locations, assumptions, hashes, and the smallest failing step.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Possible downstream impact
+      description: List known claims, runs, packs, or release evidence without modifying them.
+  - type: checkboxes
+    id: status
+    attributes:
+      label: Status boundary
+      options:
+        - label: I understand that this report does not modify alignment, proof_status, or lifecycle by itself.
+          required: true
+        - label: I removed credentials, personal data, and private research.
+          required: true

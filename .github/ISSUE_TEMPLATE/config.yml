@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: https://github.com/f0909172434/proofweave-math-lab/security/advisories/new
+    about: Report vulnerabilities privately; never post secrets or exploit details in an issue.
+  - name: Core v2 evaluation protocol
+    url: https://github.com/f0909172434/proofweave-math-lab/blob/main/docs/evaluation_protocol.md
+    about: Review reproducibility, evidence, and truth-boundary requirements before filing an issue.

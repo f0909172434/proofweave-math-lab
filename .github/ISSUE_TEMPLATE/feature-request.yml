@@ -1,0 +1,40 @@
+name: Feature request
+description: Propose a bounded Core v2 improvement without weakening evidence gates.
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Describe the user need without prescribing a large implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include inputs, outputs, and compatibility expectations.
+    validations:
+      required: true
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Certificate, alignment, and security boundaries
+      description: Explain effects on formal targets, cache keys, coverage, paths, schemas, and external tools.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: contract
+    attributes:
+      label: Contract
+      options:
+        - label: This proposal does not treat finite computation, test coverage, or model agreement as a proof.
+          required: true
+        - label: This proposal does not silently weaken fail-closed behavior or existing CLI/schema contracts.
+          required: true
+        - label: This proposal does not reintroduce Core v1 agents, workflows, providers, routers, or reviewer loops.
+          required: true

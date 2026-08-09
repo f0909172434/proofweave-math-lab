@@ -1,0 +1,80 @@
+name: Bug report
+description: Report a reproducible Core v2 software or documentation defect.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include credentials, private research, unpublished theorem text,
+        or vulnerability details. Use private vulnerability reporting for
+        security issues.
+  - type: input
+    id: commit
+    attributes:
+      label: Affected commit or release
+      description: Paste the full commit SHA or release tag.
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Windows
+        - Linux
+        - macOS
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Python, Lean, and Mathlib versions
+      description: Include every version relevant to the failure.
+      placeholder: "Python 3.14.2; Lean 4.32.1; Mathlib v4.32.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: command
+    attributes:
+      label: Core command or surface
+      options:
+        - proofweave init
+        - proofweave run
+        - proofweave status
+        - proofweave check
+        - tools.evaluate
+        - migration tool
+        - schema or documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Minimal reproduction
+      description: List exact steps and sanitized inputs.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and output
+      description: Remove tokens, personal paths, private data, and unpublished research.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed secrets, personal data, private research, and sensitive paths.
+          required: true
+        - label: This is not a private security report.
+          required: true
