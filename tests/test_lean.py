@@ -48,6 +48,28 @@ class LeanBackendTests(ProjectCase):
         self.assertTrue(environment["available"])
         self.assertIsNone(environment["toolchain_path"])
 
+    def test_environment_fingerprint_uses_toolchain_lake_without_path_shim(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json"):
+                (root / name).write_text(name, encoding="utf-8")
+            (root / ".lake" / "packages" / "mathlib").mkdir(parents=True)
+            (root / ".lake" / "packages" / "mathlib" / "Mathlib.lean").write_text("", encoding="utf-8")
+            toolchain = root / "toolchain"
+            (toolchain / "bin").mkdir(parents=True)
+            suffix = ".exe" if os.name == "nt" else ""
+            for name in ("lean", "lake"):
+                (toolchain / "bin" / f"{name}{suffix}").write_text(name, encoding="utf-8")
+            with patch(
+                "proofweave.certifiers.lean._toolchain_directory", return_value=toolchain
+            ), patch("proofweave.certifiers.lean.shutil.which", return_value=None):
+                environment = environment_fingerprint(root)
+        self.assertTrue(environment["available"])
+        self.assertEqual(
+            str((toolchain / "bin" / f"lake{suffix}").resolve()),
+            environment["lake_path"],
+        )
+
     def test_sorry_admit_axiom_and_arbitrary_tactic_are_rejected_before_host_check(self) -> None:
         for target in ("True := by sorry", "True := by admit", "axiom bad : True"):
             with self.subTest(target=target), self.assertRaises(CoreError):

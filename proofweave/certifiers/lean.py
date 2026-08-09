@@ -40,13 +40,15 @@ def environment_fingerprint(root: Path) -> dict[str, Any]:
         files[name] = hash_file(path) if path.is_file() else "MISSING"
     toolchain = _toolchain_directory(root)
     suffix = ".exe" if sys.platform == "win32" else ""
+    executables: dict[str, Path | None] = {}
     for name in ("lean", "lake"):
         path = toolchain / "bin" / f"{name}{suffix}" if toolchain else Path("MISSING")
         if not path.is_file():
             discovered = shutil.which(name)
             path = Path(discovered) if discovered else Path("MISSING")
+        executables[name] = path.resolve() if path.is_file() else None
         files[f"toolchain/{name}"] = hash_file(path) if path.is_file() else "MISSING"
-    lake = shutil.which("lake")
+    lake = executables["lake"]
     mathlib = root / ".lake" / "packages" / "mathlib" / "Mathlib.lean"
     available = bool(
         lake
@@ -57,7 +59,7 @@ def environment_fingerprint(root: Path) -> dict[str, Any]:
         "available": available,
         "fingerprint": hash_json(files),
         "files": files,
-        "lake_path": str(Path(lake).resolve()) if lake else None,
+        "lake_path": str(lake) if lake else None,
         "toolchain_path": str(toolchain) if toolchain else None,
     }
 
