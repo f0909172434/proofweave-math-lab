@@ -68,7 +68,7 @@ is built, distilled, batch-certified where supported, and rendered as a paper
 proof, concept map, and exact coverage report. Unsupported obligations produce
 `PARTIAL` and never start a reviewer loop.
 
-Lean 4.32.1 and Mathlib 4.32.1 are project-pinned. The backend generates a
+Lean 4.32.2 and Mathlib 4.32.2 are project-pinned. The backend generates a
 fixed `import Mathlib` file and accepts only enumerated tactics. Missing or
 unusable tooling produces `PARTIAL/HOST_LIMITED`.
 

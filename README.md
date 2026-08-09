@@ -8,7 +8,7 @@ ProofWeave Core v2 只做一件事：讀取 AI 產生的數學命題與證明，
 
 ## 快速開始
 
-需要 Python 3.11+、Lean 4.32.1 與 Mathlib 4.32.1：
+需要 Python 3.11+、Lean 4.32.2 與 Mathlib 4.32.2：
 
 ```powershell
 py -3.14 -m pip install -e .

@@ -4,4 +4,4 @@ version = "2.0.0"
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "v4.32.1"
+rev = "v4.32.2"

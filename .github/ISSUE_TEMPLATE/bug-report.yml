@@ -31,7 +31,7 @@ body:
     attributes:
       label: Python, Lean, and Mathlib versions
       description: Include every version relevant to the failure.
-      placeholder: "Python 3.14.2; Lean 4.32.1; Mathlib v4.32.1"
+      placeholder: "Python 3.14.2; Lean 4.32.2; Mathlib v4.32.2"
     validations:
       required: true
   - type: dropdown

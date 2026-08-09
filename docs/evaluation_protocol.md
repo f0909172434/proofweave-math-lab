@@ -15,7 +15,7 @@ version-controlled, hash-bound attestation supplied by a theorem pack.
 ## Reproducing the Core evaluation
 
 Use a clean checkout of the commit being evaluated. Certification requires the
-project-pinned Lean 4.32.1 and Mathlib 4.32.1 environment.
+project-pinned Lean 4.32.2 and Mathlib 4.32.2 environment.
 
 ```powershell
 py -3.14 -m pip install -e . -r requirements-test.txt

@@ -8,7 +8,7 @@ It is not a multi-agent governance platform. The runtime has no agents, workflow
 
 ## Quick start
 
-Python 3.11+, Lean 4.32.1, and Mathlib 4.32.1 are required for certification:
+Python 3.11+, Lean 4.32.2, and Mathlib 4.32.2 are required for certification:
 
 ```powershell
 py -3.14 -m pip install -e .
