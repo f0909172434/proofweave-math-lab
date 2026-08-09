@@ -131,10 +131,48 @@ def _without_quoted_text(line: str) -> str:
     return "".join(output)
 
 
+def _opens_multiline_flow_collection(line: str) -> bool:
+    """Reject flow collections whose lexical scope crosses a physical line."""
+
+    stack: list[str] = []
+    pairs = {"}": "{", "]": "["}
+    for character in _without_quoted_text(line):
+        if character in "{[":
+            stack.append(character)
+        elif character in "}]" and stack and stack[-1] == pairs[character]:
+            stack.pop()
+    return bool(stack)
+
+
+def _is_block_scalar_header(line: str) -> bool:
+    return re.search(r":\s*[|>][0-9+-]*\s*$", _without_comment(line)) is not None
+
+
+def _block_scalar_content_indices(lines: list[str]) -> set[int]:
+    content: set[int] = set()
+    block_scalar_indent: int | None = None
+    for index, raw_line in enumerate(lines):
+        semantic = _without_comment(raw_line)
+        if not semantic.strip():
+            continue
+        indentation = _indent(semantic)
+        if block_scalar_indent is not None:
+            if indentation > block_scalar_indent:
+                content.add(index)
+                continue
+            block_scalar_indent = None
+        if _is_block_scalar_header(raw_line):
+            block_scalar_indent = indentation
+    return content
+
+
 def _syntax_policy_errors(lines: list[str], relative: str) -> list[str]:
     errors: list[str] = []
     in_events = False
+    block_scalar_content = _block_scalar_content_indices(lines)
     for index, raw_line in enumerate(lines):
+        if index in block_scalar_content:
+            continue
         if _has_unclosed_quote(raw_line):
             errors.append(
                 f"{relative}:{index + 1}: multiline quoted YAML scalars are forbidden"
@@ -143,6 +181,10 @@ def _syntax_policy_errors(lines: list[str], relative: str) -> list[str]:
         if not semantic.strip():
             continue
         indentation = _indent(semantic)
+        if _opens_multiline_flow_collection(raw_line):
+            errors.append(
+                f"{relative}:{index + 1}: multiline YAML flow collections are forbidden"
+            )
         stripped = semantic.strip()
         mapping_view = re.sub(r"^-\s*", "", stripped, count=1)
 
@@ -421,10 +463,16 @@ def check_workflows(root: Path = ROOT) -> tuple[str, ...]:
             errors.append(f"{relative}: workflow must not contain tab characters")
         text = payload.decode("utf-8")
         lines = text.splitlines()
+        block_scalar_content = _block_scalar_content_indices(lines)
         errors.extend(_syntax_policy_errors(lines, relative))
         errors.extend(_check_permissions(lines, relative))
         for index, line in enumerate(lines):
             if "uses:" not in line:
+                continue
+            if index in block_scalar_content:
+                errors.append(
+                    f"{relative}:{index + 1}: uses inside a block scalar are forbidden"
+                )
                 continue
             stripped = line.strip()
             if stripped.startswith("uses: ./"):

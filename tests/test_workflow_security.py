@@ -250,6 +250,66 @@ jobs:
             errors,
         )
 
+    def test_multiline_flow_env_cannot_forge_codeql_actions(self) -> None:
+        payload = f"""name: CodeQL
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Init decoy
+        env: {{
+        uses: github/codeql-action/init@{GOOD_SHA} # v4.37.6
+        }}
+        run: echo no-codeql-ran
+      - name: Analyze decoy
+        env: {{
+        uses: github/codeql-action/analyze@{GOOD_SHA} # v4.37.6
+        }}
+        run: echo no-codeql-ran
+"""
+        errors = self._check_codeql(payload)
+        self.assertTrue(
+            any("multiline YAML flow collections are forbidden" in error for error in errors),
+            errors,
+        )
+
+    def test_block_scalar_text_cannot_forge_codeql_actions(self) -> None:
+        payload = f"""name: CodeQL
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - run: |
+        uses: github/codeql-action/init@{GOOD_SHA} # v4.37.6
+      - run: >-
+        uses: github/codeql-action/analyze@{GOOD_SHA} # v4.37.6
+"""
+        errors = self._check_codeql(payload)
+        self.assertTrue(
+            any("uses inside a block scalar are forbidden" in error for error in errors),
+            errors,
+        )
+
     def test_dependabot_keeps_codeql_actions_grouped(self) -> None:
         self.assertEqual(self._check_dependabot(GOOD_DEPENDABOT), ())
         cases = {
