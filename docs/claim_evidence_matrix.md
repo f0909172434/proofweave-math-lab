@@ -20,7 +20,7 @@ not be edited to make a failed run appear successful.
 | Human v1 review does not become machine certification during migration. | `MigrationTests.test_v1_verified_never_maps_to_certified` and lifecycle/dependency migration tests | v1 `VERIFIED` maps to `UNVERIFIED`; no status promotion | Mathematical validity of migrated claims |
 | Evidence-pack schema v1 cannot claim completed research verification. | `PackEvidenceTests.test_verified_status_is_unsupported_without_all_external_review_evidence` | Every v1 pack marked `VERIFIED` returns `FAIL`, even when observable Lean/alignment/dependency prerequisites pass | Whether a future schema has captured cold replay, novelty recheck, and independent review adequately |
 | The implementation stays within the declared Core budget. | `PipelineTests.test_repository_complexity_check`; `python -m proofweave check` | 10 production modules, 3 schemas, 4 commands, zero mandatory role/workflow files | Runtime soundness or research novelty |
-| The exercised implementation has high branch-aware coverage. | Coverage report from the complete test suite | Total coverage ≥ 90% | Soundness, completeness, absence of defects, or theorem truth |
+| The exercised production package has high branch-aware coverage. | Coverage report from the complete test suite; `.coveragerc` scopes measurement to `proofweave` | `proofweave` package coverage ≥ 90% | Coverage of non-runtime tooling, soundness, completeness, absence of defects, or theorem truth |
 
 ## Required wording in papers
 

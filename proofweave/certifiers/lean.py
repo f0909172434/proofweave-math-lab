@@ -5,6 +5,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -38,8 +39,9 @@ def environment_fingerprint(root: Path) -> dict[str, Any]:
         path = root / name
         files[name] = hash_file(path) if path.is_file() else "MISSING"
     toolchain = _toolchain_directory(root)
-    for name in ("lean.exe", "lake.exe"):
-        path = toolchain / "bin" / name if toolchain else Path("MISSING")
+    suffix = ".exe" if sys.platform == "win32" else ""
+    for name in ("lean", "lake"):
+        path = toolchain / "bin" / f"{name}{suffix}" if toolchain else Path("MISSING")
         files[f"toolchain/{name}"] = hash_file(path) if path.is_file() else "MISSING"
     lake = shutil.which("lake")
     mathlib = root / ".lake" / "packages" / "mathlib" / "Mathlib.lean"
