@@ -42,12 +42,14 @@ def environment_fingerprint(root: Path) -> dict[str, Any]:
     suffix = ".exe" if sys.platform == "win32" else ""
     for name in ("lean", "lake"):
         path = toolchain / "bin" / f"{name}{suffix}" if toolchain else Path("MISSING")
+        if not path.is_file():
+            discovered = shutil.which(name)
+            path = Path(discovered) if discovered else Path("MISSING")
         files[f"toolchain/{name}"] = hash_file(path) if path.is_file() else "MISSING"
     lake = shutil.which("lake")
     mathlib = root / ".lake" / "packages" / "mathlib" / "Mathlib.lean"
     available = bool(
         lake
-        and toolchain
         and all(value != "MISSING" for value in files.values())
         and mathlib.is_file()
     )

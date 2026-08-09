@@ -67,9 +67,10 @@ class CorpusEvidenceTests(unittest.TestCase):
         self.assertTrue(all(sum(case["tactic"] == tactic for case in positives) == 2 for tactic in ALLOWED_TACTICS))
 
     def test_formal_corpus_against_pinned_lean(self) -> None:
-        if not environment_fingerprint(REPOSITORY)["available"]:
+        environment = environment_fingerprint(REPOSITORY)
+        if not environment["available"]:
             if os.environ.get("PROOFWEAVE_REQUIRE_LEAN") == "1":
-                self.fail("PROOFWEAVE_REQUIRE_LEAN=1 but pinned Lean/Mathlib is unavailable")
+                self.fail(f"PROOFWEAVE_REQUIRE_LEAN=1 but pinned Lean/Mathlib is unavailable: {environment}")
             self.skipTest("Pinned Lean/Mathlib is unavailable")
         cases, _ = load_corpus()
         formal = [case for case in cases if case["category"] in {"positive", "negative"}]

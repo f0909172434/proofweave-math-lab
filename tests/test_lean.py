@@ -30,6 +30,24 @@ class LeanBackendTests(ProjectCase):
         self.assertNotEqual("MISSING", environment["files"]["toolchain/lean"])
         self.assertNotEqual("MISSING", environment["files"]["toolchain/lake"])
 
+    def test_environment_fingerprint_falls_back_to_path_shims(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json"):
+                (root / name).write_text(name, encoding="utf-8")
+            (root / ".lake" / "packages" / "mathlib").mkdir(parents=True)
+            (root / ".lake" / "packages" / "mathlib" / "Mathlib.lean").write_text("", encoding="utf-8")
+            shims = root / "shims"
+            shims.mkdir()
+            for name in ("lean", "lake"):
+                (shims / name).write_text(name, encoding="utf-8")
+            with patch("proofweave.certifiers.lean._toolchain_directory", return_value=None), patch(
+                "proofweave.certifiers.lean.shutil.which", side_effect=lambda name: str(shims / name)
+            ):
+                environment = environment_fingerprint(root)
+        self.assertTrue(environment["available"])
+        self.assertIsNone(environment["toolchain_path"])
+
     def test_sorry_admit_axiom_and_arbitrary_tactic_are_rejected_before_host_check(self) -> None:
         for target in ("True := by sorry", "True := by admit", "axiom bad : True"):
             with self.subTest(target=target), self.assertRaises(CoreError):
@@ -44,9 +62,10 @@ class LeanBackendTests(ProjectCase):
 
     def test_pinned_mathlib_true_and_false_algebra(self) -> None:
         repository = Path(__file__).resolve().parents[1]
-        if not environment_fingerprint(repository)["available"]:
+        environment = environment_fingerprint(repository)
+        if not environment["available"]:
             if os.environ.get("PROOFWEAVE_REQUIRE_LEAN") == "1":
-                self.fail("PROOFWEAVE_REQUIRE_LEAN=1 but pinned Lean/Mathlib is unavailable")
+                self.fail(f"PROOFWEAVE_REQUIRE_LEAN=1 but pinned Lean/Mathlib is unavailable: {environment}")
             self.skipTest("Pinned Mathlib cache is not installed")
         result = run_batch(repository, [
             {"id": "true", "target": "forall x : Int, (x + 1)^2 = x^2 + 2*x + 1", "tactic": "ring", "exact": None},
