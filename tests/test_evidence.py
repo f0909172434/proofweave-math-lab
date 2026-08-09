@@ -15,7 +15,7 @@ from unittest.mock import patch
 from jsonschema import Draft202012Validator
 
 from proofweave import certify as certify_module
-from proofweave.certifiers.lean import ALLOWED_TACTICS, environment_fingerprint, run_batch
+from proofweave.certifiers.lean import ALLOWED_TACTICS, run_batch
 from proofweave.certify import certify
 from proofweave.cli import main as cli_main
 from proofweave.core import CoreError, hash_file, parse_input, verify_artifacts
@@ -67,14 +67,13 @@ class CorpusEvidenceTests(unittest.TestCase):
         self.assertTrue(all(sum(case["tactic"] == tactic for case in positives) == 2 for tactic in ALLOWED_TACTICS))
 
     def test_formal_corpus_against_pinned_lean(self) -> None:
-        environment = environment_fingerprint(REPOSITORY)
-        if not environment["available"]:
-            if os.environ.get("PROOFWEAVE_REQUIRE_LEAN") == "1":
-                self.fail(f"PROOFWEAVE_REQUIRE_LEAN=1 but pinned Lean/Mathlib is unavailable: {environment}")
-            self.skipTest("Pinned Lean/Mathlib is unavailable")
         cases, _ = load_corpus()
         formal = [case for case in cases if case["category"] in {"positive", "negative"}]
         result = run_batch(REPOSITORY, [_spec(case) for case in formal])
+        if result["outcome"] == "HOST_LIMITED":
+            if os.environ.get("PROOFWEAVE_REQUIRE_LEAN") == "1":
+                self.fail(f"PROOFWEAVE_REQUIRE_LEAN=1 but pinned Lean/Mathlib is unavailable: {result}")
+            self.skipTest("Pinned Lean/Mathlib is unavailable")
         self.assertEqual(1, result["invocations"])
         for case in formal:
             with self.subTest(case_id=case["id"]):

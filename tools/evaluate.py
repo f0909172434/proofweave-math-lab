@@ -58,17 +58,17 @@ def _git(repository: Path) -> dict[str, Any]:
     }
 
 
-def _environment(repository: Path) -> dict[str, Any]:
-    lean = environment_fingerprint(repository)
+def _environment(repository: Path, lean: dict[str, Any] | None = None) -> dict[str, Any]:
+    lean = lean or environment_fingerprint(repository)
     return {
         "python": platform.python_version(),
         "python_implementation": platform.python_implementation(),
         "os": platform.system(),
         "os_release": platform.release(),
         "machine": platform.machine(),
-        "lean_available": lean["available"],
+        "lean_available": bool(lean.get("available", False)),
         "lean_fingerprint": lean["fingerprint"],
-        "lean_files": lean["files"],
+        "lean_files": lean.get("files", {}),
     }
 
 
@@ -296,7 +296,10 @@ def evaluate_core(repository: Path | None = None, *, backend: Backend = run_batc
         "result": normalized["result"],
         "generated_at": _utc_now(),
         "repository": _git(repo),
-        "environment": _environment(repo),
+        "environment": _environment(
+            repo,
+            batch.get("environment") if isinstance(batch.get("environment"), dict) else None,
+        ),
         "corpus_digest": corpus_digest,
         "cases": records,
         "metrics": metrics,

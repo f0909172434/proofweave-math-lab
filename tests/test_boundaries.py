@@ -188,7 +188,10 @@ class LeanBoundaryTests(ProjectCase):
         self.assertEqual({4}, lines)
         self.assertEqual(2, len(diagnostics))
         self.assertTrue(unlocated)
-        environment = {"available": True, "lake_path": "lake", "fingerprint": "x", "files": {}}
+        environment = {
+            "available": True, "lake_path": "lake", "expected_version": "4.32.1",
+            "fingerprint": "x", "files": {},
+        }
         spec = {"id": "goal", "target": "True", "tactic": "norm_num", "exact": None}
         with patch("proofweave.certifiers.lean.environment_fingerprint", return_value=environment), patch(
             "proofweave.certifiers.lean.subprocess.run", side_effect=OSError("missing")
@@ -197,17 +200,28 @@ class LeanBoundaryTests(ProjectCase):
         self.assertEqual("HOST_LIMITED", result["outcome"])
         self.assertEqual(1, result["invocations"])
 
-    def test_unlocated_process_error_marks_all_specs_failed(self) -> None:
-        environment = {"available": True, "lake_path": "lake", "fingerprint": "x", "files": {}}
+    def test_version_failure_or_mismatch_is_host_limited_before_compile(self) -> None:
+        environment = {
+            "available": True, "lake_path": "lake", "expected_version": "4.32.1",
+            "fingerprint": "x", "files": {},
+        }
         spec = {"id": "goal", "target": "True", "tactic": "norm_num", "exact": None}
-        version = subprocess.CompletedProcess([], 1, stdout="", stderr="version failed")
-        completed = subprocess.CompletedProcess([], 1, stdout=json.dumps({"severity": "error", "message": "global"}), stderr="")
-        with patch("proofweave.certifiers.lean.environment_fingerprint", return_value=environment), patch(
-            "proofweave.certifiers.lean.subprocess.run", side_effect=[version, completed]
-        ):
-            result = lean.run_batch(self.root, [spec])
-        self.assertEqual("FAILED", result["outcome"])
-        self.assertIsNone(result["toolchain_version"])
+        compile_success = subprocess.CompletedProcess([], 0, stdout="", stderr="")
+        versions = (
+            subprocess.CompletedProcess([], 1, stdout="", stderr="version failed"),
+            subprocess.CompletedProcess([], 0, stdout="Lean (version 4.32.10)", stderr=""),
+        )
+        for version in versions:
+            with self.subTest(version=version), patch(
+                "proofweave.certifiers.lean.environment_fingerprint", return_value=environment
+            ), patch(
+                "proofweave.certifiers.lean.subprocess.run", side_effect=[version, compile_success]
+            ) as mocked_run:
+                result = lean.run_batch(self.root, [spec])
+            self.assertEqual("HOST_LIMITED", result["outcome"])
+            self.assertEqual("HOST_LIMITED", result["results"]["goal"])
+            self.assertIsNone(result["toolchain_version"])
+            self.assertEqual(1, mocked_run.call_count)
 
 
 class PipelineIntegrityBoundaryTests(ProjectCase):
