@@ -6,12 +6,14 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 FORMAL_KINDS = {"theorem", "lemma", "proposition", "corollary"}
+CLAIM_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
 
 
 def canonical(value: Any) -> str:
@@ -89,8 +91,16 @@ def migrate(source: Path | str, root: Path | str) -> dict[str, Any]:
     identifiers = [row.get("fact_id", row.get("id")) for row in rows]
     if any(not isinstance(item, str) or not item for item in identifiers):
         raise ValueError("Every v1 record requires fact_id or id")
+    invalid_identifiers = [item for item in identifiers if CLAIM_ID_RE.fullmatch(item) is None]
+    if invalid_identifiers:
+        raise ValueError(
+            "Every v1 fact ID must match [A-Za-z0-9][A-Za-z0-9._-]{0,63}: "
+            f"{invalid_identifiers!r}"
+        )
     if len(set(identifiers)) != len(identifiers):
         raise ValueError("Duplicate v1 fact IDs")
+    if len({item.casefold() for item in identifiers}) != len(identifiers):
+        raise ValueError("v1 fact IDs must not collide on case-insensitive filesystems")
     all_ids = set(identifiers)
     for row in rows:
         missing = set(row.get("dependencies") or []) - all_ids
@@ -122,6 +132,17 @@ def migrate(source: Path | str, root: Path | str) -> dict[str, Any]:
     if found_cycle:
         raise ValueError(f"v1 dependency cycle: {' -> '.join(found_cycle)}")
     destination = project / "workspace" / "claims"
+    destination_resolved = destination.resolve()
+    if project != destination_resolved and project not in destination_resolved.parents:
+        raise ValueError("workspace/claims must remain inside the project root")
+    artifacts = project / "artifacts"
+    artifacts_resolved = artifacts.resolve()
+    if project != artifacts_resolved and project not in artifacts_resolved.parents:
+        raise ValueError("artifacts must remain inside the project root")
+    report_path = artifacts / "migration_v1_report.json"
+    expected_report_path = artifacts_resolved / report_path.name
+    if report_path.resolve() != expected_report_path:
+        raise ValueError("migration report must remain a direct artifact")
     existing = [path for path in destination.glob("*") if path.name != ".gitkeep"] if destination.exists() else []
     if existing:
         raise ValueError("workspace/claims must be empty before migration")
@@ -137,7 +158,10 @@ def migrate(source: Path | str, root: Path | str) -> dict[str, Any]:
                 continue
             text = markdown(row)
             md_name = f"{identifier}.md"
-            (staging / md_name).write_text(text, encoding="utf-8", newline="\n")
+            md_path = staging / md_name
+            if md_path.parent != staging or md_path.resolve().parent != staging.resolve():
+                raise ValueError(f"Unsafe migrated claim path: {md_name}")
+            md_path.write_text(text, encoding="utf-8", newline="\n")
             assumptions = row.get("assumptions") or ["none recorded in v1"]
             quantifiers = row.get("quantifiers") or []
             dependencies = row.get("dependencies") or []
@@ -170,7 +194,10 @@ def migrate(source: Path | str, root: Path | str) -> dict[str, Any]:
                 "updated_at": now(),
             }
             json_name = f"{identifier}--{revision_id[:16]}.json"
-            (staging / json_name).write_text(
+            json_path = staging / json_name
+            if json_path.parent != staging or json_path.resolve().parent != staging.resolve():
+                raise ValueError(f"Unsafe migrated record path: {json_name}")
+            json_path.write_text(
                 json.dumps(record, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
                 encoding="utf-8",
                 newline="\n",
@@ -180,7 +207,10 @@ def migrate(source: Path | str, root: Path | str) -> dict[str, Any]:
             )
         destination.mkdir(parents=True, exist_ok=True)
         for path in staging.iterdir():
-            os.replace(path, destination / path.name)
+            target = destination / path.name
+            if target.parent != destination or target.resolve().parent != destination.resolve():
+                raise ValueError(f"Unsafe migration destination: {path.name}")
+            os.replace(path, target)
     report = {
         "source": str(source_path),
         "migrated": migrated,
@@ -188,8 +218,7 @@ def migrate(source: Path | str, root: Path | str) -> dict[str, Any]:
         "v1_verified_mapped_to_certified": False,
         "created_at": now(),
     }
-    report_path = project / "artifacts" / "migration_v1_report.json"
-    report_path.parent.mkdir(parents=True, exist_ok=True)
+    artifacts.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return report
 
