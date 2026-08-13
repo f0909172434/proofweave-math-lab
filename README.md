@@ -1,6 +1,6 @@
 # ProofWeave Core v2
 
-[English](README.en.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
+[繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md)
 
 [![Core CI](https://github.com/f0909172434/proofweave-math-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/f0909172434/proofweave-math-lab/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/f0909172434/proofweave-math-lab/actions/workflows/codeql.yml/badge.svg)](https://github.com/f0909172434/proofweave-math-lab/actions/workflows/codeql.yml)
@@ -8,27 +8,43 @@
 [![Lean 4.32.2](https://img.shields.io/badge/Lean-4.32.2-4E64C4.svg)](lean-toolchain)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**把一份結構化數學證明，轉成小而可檢視的認證紀錄。**
+**Turn one structured mathematical proof into a small, inspectable certification run.**
 
-ProofWeave Core v2 讀取 UTF-8 Markdown 命題，輸出：
+ProofWeave Core v2 reads a UTF-8 Markdown claim and writes:
 
-- 正規化後的 UTF-8 parsed input；原始輸入 bytes 另由 `source_hash` 綁定；
-- 精簡論文證明與 Mermaid proof spine／concept map；
-- 逐項 deductive coverage；
-- 在受支援範圍內產生的 Lean 原始碼與 deterministic certificate；
-- content-addressed run metadata、雜湊與明確的 claim revision 狀態。
+- a normalized UTF-8 copy of the parsed input, while the raw input bytes remain
+  bound by `source_hash`;
+- a concise paper-proof view and Mermaid proof-spine/concept map;
+- obligation-by-obligation deductive coverage;
+- a generated Lean source file and deterministic certificate result when the
+  claim is inside the deliberately small certificate language; and
+- content-addressed run metadata, hashes, and explicit claim-revision state.
 
-Core 不會發現證明、不會把任意自然語言自動翻成 Lean，也不呼叫 LLM。
-Runtime 沒有 agents、providers、prompts、model router、reviewer loop、託管服務或
-telemetry。它只認證作者明確提供的 formal target；不支援的 obligation 會保留為
-`PARTIAL`，不會被包裝成成功。
+Core does not discover a proof, translate arbitrary natural language into Lean,
+or call an LLM. It has no agents, providers, prompts, model router, reviewer
+loop, hosted service, or telemetry. It certifies author-supplied formal targets
+and keeps unsupported obligations visibly `PARTIAL`.
 
-> **專案狀態：**實驗性研究基礎設施。目前 repository/evidence release 是
-> `v0.1.0`，Core runtime 與 protocol version 是 `2.0.0`；兩者是不同版本軸。
+> **Project status:** experimental research infrastructure. The published
+> repository/evidence release is `v0.1.0`; the Core runtime/package and protocol
+> version are `2.0.0`. Those are separate version axes.
 
-## 先看結果
+**Verified `v0.1.0` evidence snapshot:** the [published release](https://github.com/f0909172434/proofweave-math-lab/releases/tag/v0.1.0)
+records 42/42 fixed-corpus cases passing, including 14/14 positive cases, zero
+false certifications across 14 paired negative cases, and 0/8 accepted escape
+attacks. The [tagged CI run](https://github.com/f0909172434/proofweave-math-lab/actions/runs/31348288988)
+ran 79 fast tests at 96% branch-aware coverage with two Lean-dependent skips;
+its real-Lean jobs ran all 79 tests at 97% coverage with zero permitted skips on
+both Ubuntu and Windows, using pinned Lean/Mathlib 4.32.2.
 
-使用固定工具鏈執行內建環恆等式範例，會得到以下形式的結果（已省略路徑與雜湊）：
+These are finite-corpus `COMPUTATIONAL` results. They do not establish global
+soundness, completeness, absence of defects, semantic equivalence between prose
+and a formal target, or theorem truth outside the exact certified target.
+
+## See the result first
+
+Running the bundled ring identity with the pinned toolchain produces the
+following shape of result (abridged; paths and hashes are shortened):
 
 ```json
 {
@@ -55,45 +71,54 @@ telemetry。它只認證作者明確提供的 formal target；不支援的 oblig
 }
 ```
 
-`CERTIFIED + UNCONFIRMED` 是刻意的結果：Lean 證明了精確 formal target，
-但 ProofWeave 沒有推論它與人類命題語義相同。相同輸入再次執行時，Core 會先核對
-artifact hashes，然後回傳 `cache_hit: true`；model、semantic extraction 與
-certifier invocation 都是 0。
+This is intentionally `CERTIFIED + UNCONFIRMED`: Lean proved the exact formal
+target, but ProofWeave did not infer that the target means the same thing as the
+human statement. Re-running unchanged input reuses the verified artifact only
+after checking its hashes; the returned run has `cache_hit: true` and zero
+model, semantic-extraction, and certifier invocations.
 
-## 適合與不適合的情境
+## When ProofWeave fits
 
-適合用在：
+Use Core when you need to:
 
-- 以固定 Lean 工具鏈檢查代數或算術命題；
-- 清楚顯示長證明中哪些步驟有 certificate、哪些仍 unsupported；
-- 分開管理 assumptions、quantifiers、claim dependencies、revision 與 lifecycle；
-- deterministic 地拒絕依賴循環、缺少 active dependency、過期 alignment、或遭竄改
-  的 cache artifact；
-- 在不改變 certificate obligations 的前提下輸出保守的 paper view 與 proof map；
-- 為固定 corpus 或 theorem pack 產生可重現、帶 checksum 的 evaluation bundle。
+- put an algebraic or arithmetic claim behind a pinned Lean check;
+- expose which steps of a longer proof have certificates and which remain
+  unsupported;
+- keep assumptions, quantifiers, claim dependencies, revisions, and lifecycle
+  visible instead of collapsing them into one “verified” label;
+- detect dependency cycles, missing active dependencies, stale alignment, and
+  tampered cached artifacts deterministically;
+- produce a conservative paper view and proof map without changing the
+  certificate obligations; or
+- build a reproducible, checksummed evaluation bundle for a fixed corpus or a
+  theorem pack.
 
-不適合用在：
+Core is not a good fit when you need:
 
-- 自動 proof search、自然語言 formalization、任意 Lean tactic/import、互動式證明 UI；
-- 數學發現、文獻搜尋、新穎性判定、peer review 或現實世界語義保證；
-- multi-agent orchestration、model routing、研究專案管理或託管協作資料庫；
-- global soundness、completeness 或「最簡證明」保證。
+- automated proof search, natural-language formalization, arbitrary Lean
+  tactics/imports, or an interactive proof-assistant UI;
+- mathematical discovery, literature search, novelty determination, peer
+  review, or proof of a theorem's real-world interpretation;
+- multi-agent orchestration, model routing, research project management, or a
+  hosted collaboration database; or
+- a global soundness, completeness, or “simplest proof” guarantee.
 
-## 從原始碼快速開始
+## Quick start from source
 
-### 1. 前置需求
+### 1. Prerequisites
 
-- Python 3.11+；
-- Git；
-- [Elan](https://github.com/leanprover/elan)（Lean toolchain manager）。
+- Python 3.11 or newer;
+- Git; and
+- [Elan](https://github.com/leanprover/elan), the Lean toolchain manager.
 
-Repository 以 [`lean-toolchain`](lean-toolchain) 固定 Lean，以
-[`lakefile.toml`](lakefile.toml) 固定 Mathlib version，並由
-[`lake-manifest.json`](lake-manifest.json) 固定完整 dependency revisions。
-雖然 bootstrap 從 shell 呼叫 `lake`，實際認證會依專案 pin 從 Elan 管理目錄
-（或 `ELAN_HOME`）解析 `lean`／`lake`；PATH-only shim 不算 frozen certifier。
+The repository pins Lean in [`lean-toolchain`](lean-toolchain), Mathlib in
+[`lakefile.toml`](lakefile.toml), and the complete dependency revisions in
+[`lake-manifest.json`](lake-manifest.json). Although the bootstrap commands use
+`lake` from the shell, certification resolves `lean` and `lake` from the
+Elan-managed directory selected by the project pin (or `ELAN_HOME`). A
+PATH-only shim is not treated as a frozen certifier.
 
-### 2. 安裝並凍結 formal environment
+### 2. Install and freeze the formal environment
 
 ```console
 git clone https://github.com/f0909172434/proofweave-math-lab.git
@@ -103,12 +128,13 @@ lake update mathlib
 lake exe cache get
 ```
 
-Windows 可把每個 `python` 換成 `py -3.14`。第一次下載 Mathlib checkout/cache
-可能需要數分鐘。Core 本身沒有 Python runtime dependency；真正認證才需要完整的
-Lean/Mathlib。若環境不完整，Core 會 fail closed 為 `PARTIAL/HOST_LIMITED`，
-不會捏造 certificate。
+On Windows, `py -3.14` can replace `python` in every command. The first Mathlib
+checkout/cache download can take several minutes. Core itself has no Python
+runtime dependency; Lean/Mathlib is required only for real certification.
+Without the complete pinned environment, Core fails closed with
+`PARTIAL/HOST_LIMITED` instead of manufacturing a certificate.
 
-### 3. 初始化並認證範例
+### 3. Initialize and certify the example
 
 ```console
 python -m proofweave init
@@ -116,26 +142,29 @@ python -m proofweave run examples/simple_ring/theorem.md
 python -m proofweave status square-successor
 ```
 
-`init` 只建立缺少的 `workspace/claims/` 與 `artifacts/`；`run` 在終端輸出
-JSON 並寫入完整 run；`status` 讀取 claim revision，並依三個獨立狀態軸統計。
+`init` creates `workspace/claims/` and `artifacts/` without overwriting existing
+files. `run` prints JSON and writes the complete run. `status` reads claim
+revision state and returns counts for all three independent status axes.
 
-不要機械式加入 `--confirm-alignment`。人類先比對精確的 `## Statement` 加
-quantifiers 與 Lean `target`，並另外確認 assumptions/dependencies 符合預期 theorem，
-再用以下命令建立本地 alignment attestation：
+Do not add `--confirm-alignment` mechanically. After a human compares the exact
+`## Statement` plus quantifiers with the Lean `target`—and separately checks
+that the assumptions and dependencies match the intended theorem—this command
+records a local alignment attestation:
 
 ```console
 python -m proofweave run examples/simple_ring/theorem.md --confirm-alignment
 ```
 
-Alignment hash 把 `statement_hash`（statement 加 quantifiers）與 formal-target hash
-綁在一起；stored source hash 會偵測其他 source edits。這個 flag 不驗證 reviewer
-身分，也不代表 novelty、peer review 或 formal target 以外的真實性。Source 變動後，
-stored alignment 會顯示 `STALE`，直到人類檢查並執行新 revision。
+The alignment hash binds `statement_hash` (statement plus quantifiers) to the
+formal-target hash; the stored source hash detects other source edits. The flag
+does not authenticate the reviewer or establish novelty, peer review, or truth
+outside the encoded formal target. A later source change makes the stored
+alignment appear `STALE` until the new revision is inspected and run.
 
-## 輸入契約
+## Input contract
 
-Claim 以 TOML front matter 開始，後接 `## Statement` 與 `## Proof`；whole-claim
-certificate 放在可選的 `## Certificate`：
+A claim begins with TOML front matter, then `## Statement` and `## Proof`. A
+whole-claim certificate goes in an optional `## Certificate` section:
 
 ````markdown
 +++
@@ -162,19 +191,20 @@ tactic = "ring"
 ```
 ````
 
-重要解析規則：
+Important parsing rules:
 
-- `claim_id` 必須符合 `[A-Za-z0-9][A-Za-z0-9._-]{0,63}`。
-- `assumptions` 必須明列；適用時使用 `["none"]`。
-- `quantifiers` 與 `dependencies` 是陣列。每個 dependency 必須已在同一專案中有
-  唯一一個 `ACTIVE` claim revision。
-- Claim dependencies 與 proof-node dependencies 都必須是無環 DAG。
-- 不明 front-matter/certificate fields 會 fail closed。
-- 輸入 bytes 必須是 UTF-8。
+- `claim_id` must match `[A-Za-z0-9][A-Za-z0-9._-]{0,63}`.
+- `assumptions` must be explicit; use `["none"]` when appropriate.
+- `quantifiers` and `dependencies` are arrays. Every dependency must already
+  have exactly one `ACTIVE` claim revision in the same project.
+- Claim dependencies and proof-node dependencies must be acyclic.
+- Unknown front-matter and certificate fields fail closed.
+- Input bytes must be UTF-8.
 
-### 較長、只有部分 formalization 的證明
+### Longer, partially formalized proofs
 
-若沒有 whole-claim `## Certificate`，Core 會建立一份 deterministic proof IR：
+Without a whole-claim `## Certificate`, Core builds one deterministic proof IR.
+Use headings of the following form:
 
 ````markdown
 ### normalize [computational]
@@ -192,57 +222,62 @@ Depends: normalize
 Explain why the certified endpoint establishes the intended mathematical step.
 ````
 
-角色為 `semantic`、`bridge`、`computational`、`alias`。每個非 `alias` node
-都是 deductive obligation。若 node 沒有受支援 certificate，就會原樣保留為
-unsupported，整體 run 是 `PARTIAL`；Core 不會啟動 reviewer loop 來掩蓋缺口。
-可直接查看內建 [`partial_proof`](examples/partial_proof/theorem.md) 範例。
+The roles are `semantic`, `bridge`, `computational`, and `alias`. Every
+non-`alias` node is a deductive obligation. A node without a supported
+certificate remains in the output as unsupported, so the whole run is
+`PARTIAL`; Core never starts a reviewer loop to hide the gap. See the bundled
+[`partial_proof`](examples/partial_proof/theorem.md) example.
 
-## 四個命令與退出碼
+## Commands and exit status
 
-| 命令 | 功能 | 是否寫入專案狀態 |
+Core deliberately exposes exactly four top-level commands:
+
+| Command | What it does | Writes project state? |
 | --- | --- | --- |
-| `proofweave init [--root DIR]` | 建立 `workspace/claims/` 與 `artifacts/` | 只建立缺少目錄 |
-| `proofweave run INPUT [--root DIR] [--confirm-alignment]` | 解析、認證、render、hash 並記錄一個 claim revision | 是 |
-| `proofweave status [CLAIM_ID] [--root DIR]` | 顯示 revisions 與各狀態軸統計 | 否 |
-| `proofweave check [--root DIR]` | 核對 schemas、hashes、DAG、artifact integrity 與 Core budgets | 否 |
+| `proofweave init [--root DIR]` | Create `workspace/claims/` and `artifacts/` | Only missing directories |
+| `proofweave run INPUT [--root DIR] [--confirm-alignment]` | Parse, certify, render, hash, and record one claim revision | Yes |
+| `proofweave status [CLAIM_ID] [--root DIR]` | Show stored revisions and counts by status axis | No |
+| `proofweave check [--root DIR]` | Verify schemas, hashes, DAGs, artifact integrity, and Core budgets | No |
 
-可使用已安裝的 `proofweave`，或 `python -m proofweave`。退出碼適合自動化：
+Use either the installed `proofweave` entry point or
+`python -m proofweave`. Exit codes are automation-safe:
 
-| 呼叫 | Exit `0` | Exit `1` | Exit `2` |
+| Invocation | Exit `0` | Exit `1` | Exit `2` |
 | --- | --- | --- | --- |
-| `run` | `CERTIFIED` | `FAILED` 或 input/runtime error | `PARTIAL`，包括 `HOST_LIMITED` |
-| `check` | `PASS` | `FAIL` 或 error | — |
-| `init`、`status` | 成功 | Error | — |
+| `run` | `CERTIFIED` | `FAILED` or invalid input/runtime error | `PARTIAL`, including `HOST_LIMITED` |
+| `check` | `PASS` | `FAIL` or error | — |
+| `init`, `status` | Success | Error | — |
 
-Exit `2` 代表證明尚未完成，不是可忽略的成功 warning。
+Treat exit `2` as an incomplete proof, not a successful warning.
 
-## 判讀三個正交狀態軸
+## Reading the three status axes
 
-三者互相獨立，不可由其中之一推論另一個：
+The axes are orthogonal; never infer one from another.
 
-| 狀態軸 | 值 | 含義 |
+| Axis | Values | Meaning |
 | --- | --- | --- |
-| `proof_status` | `UNVERIFIED`, `PARTIAL`, `CERTIFIED`, `FAILED` | 本 revision 的 machine-certificate 結果；`UNVERIFIED` 也保留給 v1 保守遷移等紀錄。 |
-| `alignment` | `UNCONFIRMED`, `CONFIRMED`, `STALE` | 人類對 statement/formal-target 的 hash-bound 比對是否仍有效。 |
-| `lifecycle` | `ACTIVE`, `SUPERSEDED`, `REVOKED` | Revision 治理，不會改寫 certificate truth。 |
+| `proof_status` | `UNVERIFIED`, `PARTIAL`, `CERTIFIED`, `FAILED` | Machine-certificate result for this revision. `UNVERIFIED` is retained for records such as conservative v1 migrations. |
+| `alignment` | `UNCONFIRMED`, `CONFIRMED`, `STALE` | Whether a human hash-bound statement/formal-target comparison is current. |
+| `lifecycle` | `ACTIVE`, `SUPERSEDED`, `REVOKED` | Revision governance; it does not change certificate truth. |
 
-常見組合：
+Common combinations:
 
-- `CERTIFIED + UNCONFIRMED + ACTIVE`：Lean 證明 formal target；尚無 prose
-  equivalence attestation。
-- `CERTIFIED + CONFIRMED + ACTIVE`：formal target 通過且人類確認受綁定 pair；
-  仍不代表 novelty 或 peer review。
-- `CERTIFIED + STALE`：先前 certificate record 仍存在，但 alignment 後來因 source
-  bytes 改變而過期；必須重讀並重跑。
-- `PARTIAL + UNCONFIRMED`：至少一個 obligation unsupported，或 host 缺少 frozen
-  Lean environment。
-- `FAILED`：至少一個已提交 formal obligation 被 Lean 判定失敗。
+- `CERTIFIED + UNCONFIRMED + ACTIVE`: Lean proved the formal target; prose
+  equivalence has not been attested.
+- `CERTIFIED + CONFIRMED + ACTIVE`: the formal target passed and a human
+  attested the bound pair. This still says nothing about novelty or peer review.
+- `CERTIFIED + STALE`: the prior certificate record still exists, but the
+  source bytes changed after alignment; re-inspect and re-run.
+- `PARTIAL + UNCONFIRMED`: at least one obligation is unsupported or the host
+  lacks the frozen Lean environment.
+- `FAILED`: at least one submitted formal obligation failed Lean.
 
-Research-pack 的 `OPEN`、`PROPOSED`、`COMPUTATIONAL`、`VERIFIED` 是另一個
-evidence layer，不是第四個 Core claim axis。現行 theorem-pack schema 不能綁定所有
-獨立審查與 novelty evidence，因此會刻意拒絕每個 `VERIFIED` pack。
+Research-pack statuses (`OPEN`, `PROPOSED`, `COMPUTATIONAL`, `VERIFIED`) are a
+separate evidence layer, not a fourth Core claim axis. The current theorem-pack
+schema intentionally rejects every `VERIFIED` pack because it cannot bind all
+required independent-review and novelty evidence.
 
-## Pipeline 與 artifact layout
+## Pipeline and artifact layout
 
 ```text
 UTF-8 TOML + Markdown
@@ -257,7 +292,7 @@ pinned-environment fingerprint ──► cache validation ──► allowlisted 
 exact coverage/status ──► conservative rendering ──► hashed run + claim state
 ```
 
-Fast-path run 會寫入：
+A fast-path run writes:
 
 ```text
 workspace/claims/
@@ -274,49 +309,55 @@ artifacts/square-successor/<run-id>/
 └── run.sha256
 ```
 
-Structured long proof 另有 `proof_ir.json`。`paper_proof.md` 與
-`concept_map.md` 只是 presentation views，不提供額外 proof authority。
-`run.json` 記錄每個 payload artifact hash，`run.sha256` 另行保護該 run record；
-cache key 綁定 material claim、certificate、dependency、certifier 與 toolchain
-inputs。缺少、移動、不一致或被修改的 artifact 不會被靜默重用。
+Structured long proofs also write `proof_ir.json`. `paper_proof.md` and
+`concept_map.md` are presentation views, never extra proof authority. Every
+payload artifact is hashed in `run.json`; `run.sha256` separately protects that
+run record. A cache key binds the material claim, certificate, dependency,
+certifier, and toolchain inputs. Missing, moved, inconsistent, or modified
+artifacts are not silently reused.
 
-## Certificate language 與信任邊界
+## Certificate language and trust boundary
 
-產生的 Lean file 固定以 `import Mathlib` 開始，並停用 automatic implicit
-parameters。Certificate block 只接受：
+The generated Lean file always starts with fixed `import Mathlib` and disables
+automatic implicit parameters. The certificate block accepts only:
 
-- `ring`、`ring_nf`、`norm_num`、`linarith`、`nlinarith`、`positivity`；
-- 受限的 `exact`，只能引用同一 generated batch 中較早已認證的 node。
+- `ring`, `ring_nf`, `norm_num`, `linarith`, `nlinarith`, and `positivity`; or
+- restricted `exact`, referring to an earlier certified node in the same
+  generated batch.
 
-Core 拒絕任意 command/import、allowlist 外 tactic、`sorry`、`admit`、自訂 axiom、
-unsafe/meta execution、`run_tac`、`native_decide`，以及嘗試定義 theorem/declaration
-的 certificate syntax。
+Core rejects arbitrary commands/imports, tactics outside the allowlist,
+`sorry`, `admit`, custom axioms, unsafe/meta execution, `run_tac`,
+`native_decide`, and certificate syntax that attempts to define its own theorem
+or declaration.
 
-認證與 cache reuse 綁定：
+What is bound into certification and reuse includes:
 
-- statement、assumptions、quantifiers、dependency certificate digests；
-- 完整 certificate view 與 certifier version；
-- `lean-toolchain`、`lakefile.toml`、`lake-manifest.json`；
-- Elan 管理的 Lean/Lake executables 與 Lean library artifacts；
-- 精確、乾淨的 dependency Git revisions 與 observed Lean-artifact digests。
+- the statement, assumptions, quantifiers, and dependency certificate digests;
+- the complete certificate view and certifier version;
+- `lean-toolchain`, `lakefile.toml`, `lake-manifest.json`;
+- Elan-managed Lean/Lake executables and Lean library artifacts; and
+- exact, clean dependency Git revisions plus the observed Lean-artifact
+  digests.
 
-Trusted computing base 仍包含 Python implementation、OS、Git executable、Elan
-管理的 Lean toolchain、Lean kernel/compiler 與 pinned Mathlib dependency closure。
-Hash 能偵測 bytes 改變，不會證明 host 未遭入侵。通過的 Lean result 只證明該環境
-下的 generated formal target；它不建立：
+The trusted computing base still includes the Python implementation, operating
+system, Git executable, Elan-managed Lean toolchain, Lean kernel/compiler, and
+the pinned Mathlib dependency closure. Hashes detect changed bytes; they do not
+prove that the host was uncompromised. A passing Lean result proves only the
+generated formal target under that environment. It does not establish:
 
-- 自然語言 statement 的語義等價（除非另有人類 alignment）；
-- informal assumptions 的真實性或 intended domain interpretation；
-- novelty、openness、publication priority、peer review 或 expert consensus；
-- tactic allowlist 的 completeness 或完全沒有 implementation bug；
-- Lean／Mathlib／host 的 global soundness。
+- equivalence to the natural-language statement without human alignment;
+- truth of informal assumptions or the intended domain interpretation;
+- novelty, openness, publication priority, peer review, or expert consensus;
+- completeness of the tactic allowlist or absence of every implementation bug;
+  or
+- global Lean/Mathlib/host soundness.
 
-完整邊界見 [threat model](docs/design/threat_model.md) 與
-[Core v2 architecture record](docs/v2_refactor.md)。
+See the [threat model](docs/design/threat_model.md) and the destructive
+[Core v2 architecture record](docs/v2_refactor.md) for the full boundary.
 
-## Evaluation 與 theorem packs
+## Evaluation and theorem packs
 
-安裝固定的 test-only dependencies，再跑本地 gate：
+Install the pinned test-only dependencies, then run the local gate:
 
 ```console
 python -m pip install -r requirements-test.txt
@@ -326,59 +367,61 @@ python -m proofweave check
 python -m tools.check_workflow_security
 ```
 
-若要產生真實 fixed-corpus evidence bundle，先按 quick start 完成 Lean environment，
-再明確要求 Lean：
+For a real fixed-corpus evidence bundle, first freeze the Lean environment as in
+the quick start and require it explicitly:
 
 ```powershell
 $env:PROOFWEAVE_REQUIRE_LEAN = "1"
 python -m tools.evaluate core --output artifacts/evaluation
 ```
 
-POSIX shell 使用
-`PROOFWEAVE_REQUIRE_LEAN=1 python -m tools.evaluate core --output artifacts/evaluation`。
-Bundle 包含 `evaluation.json`、`summary.md`、`environment.txt`、保留的 Lean sources
-與 `SHA256SUMS`。
+On POSIX shells, use
+`PROOFWEAVE_REQUIRE_LEAN=1 python -m tools.evaluate core --output artifacts/evaluation`.
+The bundle contains `evaluation.json`, `summary.md`, `environment.txt`, retained
+Lean sources, and `SHA256SUMS`.
 
-固定 corpus 有 42 個 stable cases：14 positive、14 paired negative、8 escape
-attempts、6 fail-closed state/integrity cases，另含 cold/warm replay。通過結果只是
-finite-corpus `COMPUTATIONAL` evidence，不是 global soundness proof。Research pack、
-attestation、release evidence 與 promotion limits 詳見
-[evaluation protocol](docs/evaluation_protocol.md) 與
-[claim–evidence matrix](docs/claim_evidence_matrix.md)。
+The fixed corpus has 42 stable cases: 14 positive, 14 paired negative, 8 escape
+attempts, and 6 fail-closed state/integrity cases, plus a cold/warm replay. A
+passing result is finite-corpus `COMPUTATIONAL` evidence, not a global soundness
+proof. For research packs, attestation format, release evidence, and exact
+promotion limits, read the [evaluation protocol](docs/evaluation_protocol.md)
+and [claim–evidence matrix](docs/claim_evidence_matrix.md).
 
-CI 在 Ubuntu/Windows 的 Python 3.11/3.14 執行測試，並在兩平台使用 pinned Lean
-做真實認證。Tag workflow 只建立並 attest candidate evidence 與 **draft** release；
-publication 仍是獨立的人類動作。
+CI runs Python 3.11 and 3.14 on Ubuntu and Windows, with real pinned Lean
+certification on both platforms. Tag workflows build and attest candidate
+evidence and create a **draft** release only; publication remains a separate
+human action.
 
-## 與其他專案的關係
+## Relationship to the other projects
 
-三個 repository 可互補，但沒有暗示 runtime dependency 或自動資料交換：
+The repositories are complementary, but there is no implied runtime dependency
+or automatic data interchange:
 
-| 專案 | 窄責任範圍 |
+| Project | Narrow responsibility |
 | --- | --- |
-| **ProofWeave Core** | 認證精確 formal target、暴露 partial obligations、保留 content-addressed proof runs。 |
-| [RigorGraph](https://github.com/f0909172434/rigorgraph) | 稽核較廣的 claim–evidence traceability 與人類 workflow records；不是 theorem prover。 |
-| [HonestCI](https://github.com/f0909172434/honest-ci) | 檢查預期測試 evidence 是否真的執行；不主張數學真實性。 |
+| **ProofWeave Core** | Certify exact formal targets, expose partial obligations, and retain content-addressed proof runs. |
+| [RigorGraph](https://github.com/f0909172434/rigorgraph) | Audit broader claim–evidence traceability and human workflow records; it is not a theorem prover. |
+| [HonestCI](https://github.com/f0909172434/honest-ci) | Check whether expected test evidence actually ran; it makes no mathematical truth claim. |
 
-## 開發與遷移
+## Development and migration
 
-修改 Core 前先讀 [CONTRIBUTING.md](CONTRIBUTING.md)。Enforced design budget 是十個
-production modules、三個 schemas、四個 commands、零 Python runtime dependencies、
-零 model calls/reviewer loops、受支援 cold run 最多一個 Lean batch、unchanged warm
-run 零額外工作。
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before changing Core. The enforced design
+budget is ten production modules, three schemas, four commands, no Python
+runtime dependencies, no model calls/reviewer loops, at most one supported cold
+Lean batch, and zero extra work on an unchanged warm run.
 
-Core v1 可從 Git history 取回；v2 不提供 compatibility runtime。一次性 formal-record
-migration 必須明確呼叫工具：
+Core v1 remains recoverable from Git history; v2 does not ship a compatibility
+runtime. One-time formal-record migration is available as an explicit tool:
 
 ```console
 python -m tools.migrate_v1 OLD_FACT_GRAPH --root .
 ```
 
-Migration 驗證後保留 formal statement fields 與 dependencies；non-formal evidence
-會被列出並略過。所有 v1 人工 `VERIFIED` 都保守映射成
-`UNVERIFIED + UNCONFIRMED`，絕不轉成 `CERTIFIED`。
+Migration preserves formal statement fields and dependencies after validation.
+Non-formal evidence is reported and skipped. Every v1 human `VERIFIED` record
+maps conservatively to `UNVERIFIED + UNCONFIRMED`, never to `CERTIFIED`.
 
-## License 與安全性
+## License and security
 
-ProofWeave Core 使用 [MIT License](LICENSE)。疑似 vulnerability 請依
-[SECURITY.md](SECURITY.md) 私下通報，不要建立公開 issue。
+ProofWeave Core is available under the [MIT License](LICENSE). Report suspected
+vulnerabilities through [SECURITY.md](SECURITY.md), not a public issue.

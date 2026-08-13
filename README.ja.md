@@ -1,6 +1,6 @@
 # ProofWeave Core v2
 
-[繁體中文](README.md) | [English](README.en.md) | [简体中文](README.zh-CN.md)
+[English](README.md) | [繁體中文](README.zh-TW.md) | [简体中文](README.zh-CN.md)
 
 ProofWeave Core v2 は、AI が生成した数学命題と証明を読み、簡潔な論文用証明、proof spine／concept map、そして対応可能な場合は Lean 証明書と正確な deductive coverage を一度に出力します。
 
