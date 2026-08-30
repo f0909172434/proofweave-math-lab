@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+      <title id="title">ProofWeave Core</title><desc id="desc">Structured proof certification with an explicit semantic boundary.</desc>
+      <rect width="1200" height="360" fill="#171713"/><path d="M0 306h1200M676 0v360" stroke="#f0eee4" stroke-opacity=".28"/>
+      <g font-family="Arial, Helvetica, sans-serif"><text x="54" y="61" fill="#d9ee64" font-size="15" font-weight="700" letter-spacing="3">PW / 02 / PUBLIC WORK</text>
+      <text x="54" y="166" fill="#f0eee4" font-size="62" font-weight="750" letter-spacing="-3">ProofWeave Core</text>
+      <text x="54" y="216" fill="#f0eee4" fill-opacity=".68" font-size="19">Structured proof certification with an explicit semantic boundary.</text>
+      <text x="54" y="329" fill="#f0eee4" fill-opacity=".62" font-size="13" letter-spacing="2">CLAIM  /  EVIDENCE  /  BOUNDARY</text></g>
+      <g fill="none" stroke="#f0eee4" stroke-width="3"><path d="M752 62h92v76h78v76h78v76h142"/><path d="M782 290h-34V96h34" stroke="#d9ee64"/><circle cx="844" cy="138" r="10" fill="#d9ee64"/><circle cx="922" cy="214" r="10" fill="#f0eee4"/><circle cx="1000" cy="290" r="10" fill="#d9ee64"/></g>
+    </svg>
