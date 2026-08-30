@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/readme-hero.svg" alt="ProofWeave Core project header" width="100%" />
+</p>
+
 # ProofWeave Core v2
 
 [English](README.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md)
