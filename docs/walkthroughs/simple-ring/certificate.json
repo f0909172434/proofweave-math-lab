@@ -1,0 +1,12 @@
+{
+  "backend": "lean",
+  "cache_key": "93e40102326e4ef62d6a85fcd77c1b2e0dd137fd6c2111c2fda04377da2c159b",
+  "certifier_version": "2.0.0",
+  "diagnostics": [],
+  "outcome": "PASSED",
+  "results": {
+    "claim": "PASSED"
+  },
+  "toolchain_fingerprint": "da5b530ced5cd5ce1b8d5d5981a26c4c7ae7a3d34f75539d9a60de0a8e1be29f",
+  "toolchain_version": "Lean (version 4.32.2, arm64-apple-darwin24.6.0, commit f3b06c705e6c85f5314019d5d3baab0fec5b580c, Release)"
+}

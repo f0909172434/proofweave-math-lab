@@ -1,0 +1,61 @@
+{
+  "schema_version": 2,
+  "created_at": "2026-09-05T04:26:44.696801Z",
+  "claim_id": "square-successor",
+  "run_id": "da017761eee6dd15da8a5e5149851afc0be76f4565da6b094ffd760dc7743c56",
+  "source_hash": "61470067756bd75811cd53619408e23f2416d8f985b68e67bf1dc34b6b1e17ce",
+  "statement_hash": "a6bf89028a1508f76609ab3699e70e33fdaabf04ef53e4335ca3716fc30b0f4b",
+  "proof_status": "CERTIFIED",
+  "alignment": "UNCONFIRMED",
+  "coverage": {
+    "certified": 1,
+    "certified_ids": [
+      "claim"
+    ],
+    "deductive_total": 1,
+    "dependencies_ready": true,
+    "failed": 0,
+    "failed_ids": [],
+    "host_limited": 0,
+    "host_limited_ids": [],
+    "percentage": 100.0,
+    "unsupported": 0,
+    "unsupported_ids": []
+  },
+  "invocations": {
+    "certifier": 1,
+    "model": 0,
+    "semantic_extraction": 0
+  },
+  "certificate": {
+    "backend": "lean",
+    "cache_key": "93e40102326e4ef62d6a85fcd77c1b2e0dd137fd6c2111c2fda04377da2c159b",
+    "certifier_version": "2.0.0",
+    "diagnostics": [],
+    "outcome": "PASSED",
+    "results": {
+      "claim": "PASSED"
+    },
+    "toolchain_fingerprint": "da5b530ced5cd5ce1b8d5d5981a26c4c7ae7a3d34f75539d9a60de0a8e1be29f",
+    "toolchain_version": "Lean (version 4.32.2, arm64-apple-darwin24.6.0, commit f3b06c705e6c85f5314019d5d3baab0fec5b580c, Release)"
+  },
+  "record_type": "selected fields from an actual local CLI run; absolute host paths omitted",
+  "source_commit": "ffc457fdb448e7ffbe6376d58f881602bede01b7",
+  "second_run": {
+    "cache_hit": true,
+    "run_id": "da017761eee6dd15da8a5e5149851afc0be76f4565da6b094ffd760dc7743c56",
+    "invocations": {
+      "certifier": 0,
+      "model": 0,
+      "semantic_extraction": 0
+    },
+    "proof_status": "CERTIFIED",
+    "alignment": "UNCONFIRMED"
+  },
+  "artifacts": {
+    "certificate.json": "539a8c019ea110907128222d7f76eccd68f468714857a94b66097104036ae83c",
+    "certificate.lean": "3d51b9040ec98449c8410aacea35d461476bdb93b1dbc9cd9ed03bee423ea952",
+    "coverage.json": "127a201b16c7c4532a07089e5b008e64bd1c515a8c097d38a8b6c0a083a15c53",
+    "input.md": "61470067756bd75811cd53619408e23f2416d8f985b68e67bf1dc34b6b1e17ce"
+  }
+}
