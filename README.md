@@ -81,6 +81,8 @@ human statement. Re-running unchanged input reuses the verified artifact only
 after checking its hashes; the returned run has `cache_hit: true` and zero
 model, semantic-extraction, and certifier invocations.
 
+For an actual run with exact input, generated Lean, certificate hashes and a cache-hit readback, see the [recorded simple-ring walkthrough](docs/walkthroughs/simple-ring/README.md).
+
 ## When ProofWeave fits
 
 Use Core when you need to:

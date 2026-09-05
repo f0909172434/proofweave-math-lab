@@ -1,0 +1,15 @@
+{
+  "certified": 1,
+  "certified_ids": [
+    "claim"
+  ],
+  "deductive_total": 1,
+  "dependencies_ready": true,
+  "failed": 0,
+  "failed_ids": [],
+  "host_limited": 0,
+  "host_limited_ids": [],
+  "percentage": 100.0,
+  "unsupported": 0,
+  "unsupported_ids": []
+}
