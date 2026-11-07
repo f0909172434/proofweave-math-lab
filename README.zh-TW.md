@@ -12,7 +12,7 @@
 [![Lean 4.32.2](https://img.shields.io/badge/Lean-4.32.2-4E64C4.svg)](lean-toolchain)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**ProofWeave Core 用 Lean 檢查一份結構化的數學證明，並記錄哪些步驟通過認證、哪些沒有。**
+**ProofWeave Core 用 Lean 檢查結構化數學證明所附的 formal target，並記錄哪些步驟通過認證、哪些沒有。**
 
 ProofWeave Core v2 讀取一份以 UTF-8 Markdown 寫成的數學命題，並輸出以下內容：
 

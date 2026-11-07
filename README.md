@@ -12,7 +12,7 @@
 [![Lean 4.32.2](https://img.shields.io/badge/Lean-4.32.2-4E64C4.svg)](lean-toolchain)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**ProofWeave Core checks a structured mathematical proof against Lean and records which steps were certified and which were not.**
+**ProofWeave Core checks the Lean targets attached to a structured mathematical proof and records which steps were certified and which were not.**
 
 ProofWeave Core v2 reads one mathematical claim written in UTF-8 Markdown and writes:
 
