@@ -12,43 +12,42 @@
 [![Lean 4.32.2](https://img.shields.io/badge/Lean-4.32.2-4E64C4.svg)](lean-toolchain)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-**Turn one structured mathematical proof into a small, inspectable certification run.**
+**ProofWeave Core checks a structured mathematical proof against Lean and records which steps were certified and which were not.**
 
-ProofWeave Core v2 reads a UTF-8 Markdown claim and writes:
+ProofWeave Core v2 reads one mathematical claim written in UTF-8 Markdown and writes:
 
-- a normalized UTF-8 copy of the parsed input, while the raw input bytes remain
-  bound by `source_hash`;
-- a concise paper-proof view and Mermaid proof-spine/concept map;
-- obligation-by-obligation deductive coverage;
-- a generated Lean source file and deterministic certificate result when the
-  claim is inside the deliberately small certificate language; and
-- content-addressed run metadata, hashes, and explicit claim-revision state.
+- a normalized UTF-8 copy of the parsed input, while `source_hash` still binds the raw input bytes;
+- a short paper-proof view and a Mermaid proof-spine and concept map;
+- deductive coverage for each obligation;
+- a generated Lean source file and a deterministic certificate result, when the claim falls inside
+  the deliberately small certificate language; and
+- content-addressed run metadata, hashes and an explicit claim-revision state.
 
-Core does not discover a proof, translate arbitrary natural language into Lean,
-or call an LLM. It has no agents, providers, prompts, model router, reviewer
-loop, hosted service, or telemetry. It certifies author-supplied formal targets
-and keeps unsupported obligations visibly `PARTIAL`.
+Core does not discover proofs, translate arbitrary natural language into Lean, or call an LLM.
+It has no agents, providers, prompts, model router, reviewer loop, hosted service or telemetry.
+It certifies formal targets that the author supplies, and it marks every obligation it cannot
+certify as `PARTIAL` in the output.
 
-> **Project status:** experimental research infrastructure. The published
-> repository/evidence release is `v0.1.0`; the Core runtime/package and protocol
-> version are `2.0.0`. Those are separate version axes.
+> **Project status.** ProofWeave is experimental research infrastructure. The published
+> repository and evidence release is `v0.1.0`, while the Core runtime, package and protocol are
+> version `2.0.0`. The two version numbers track different things.
 
-**Verified `v0.1.0` evidence snapshot:** the [published release](https://github.com/f0909172434/proofweave-math-lab/releases/tag/v0.1.0)
-records 42/42 fixed-corpus cases passing, including 14/14 positive cases, zero
-false certifications across 14 paired negative cases, and 0/8 accepted escape
-attacks. The [tagged CI run](https://github.com/f0909172434/proofweave-math-lab/actions/runs/31348288988)
-ran 79 fast tests at 96% branch-aware coverage with two Lean-dependent skips;
-its real-Lean jobs ran all 79 tests at 97% coverage with zero permitted skips on
-both Ubuntu and Windows, using pinned Lean/Mathlib 4.32.2.
+The [published release](https://github.com/f0909172434/proofweave-math-lab/releases/tag/v0.1.0)
+for `v0.1.0` records 42/42 fixed-corpus cases passing. That includes 14/14 positive cases, zero
+false certifications across 14 paired negative cases, and 0/8 accepted escape attacks. The
+[tagged CI run](https://github.com/f0909172434/proofweave-math-lab/actions/runs/31348288988)
+ran 79 fast tests at 96% branch-aware coverage with two Lean-dependent skips. Its real-Lean jobs
+ran all 79 tests at 97% coverage with zero permitted skips on both Ubuntu and Windows, using pinned
+Lean/Mathlib 4.32.2.
 
-These are finite-corpus `COMPUTATIONAL` results. They do not establish global
-soundness, completeness, absence of defects, semantic equivalence between prose
-and a formal target, or theorem truth outside the exact certified target.
+These are `COMPUTATIONAL` results on a finite corpus. They do not establish global soundness,
+completeness, absence of defects, semantic equivalence between prose and a formal target, or the
+truth of any theorem beyond the exact certified target.
 
 ## See the result first
 
-Running the bundled ring identity with the pinned toolchain produces the
-following shape of result (abridged; paths and hashes are shortened):
+Running the bundled ring identity with the pinned toolchain gives a result of the following shape.
+It is abridged, and paths and hashes are shortened:
 
 ```json
 {
@@ -75,54 +74,52 @@ following shape of result (abridged; paths and hashes are shortened):
 }
 ```
 
-This is intentionally `CERTIFIED + UNCONFIRMED`: Lean proved the exact formal
-target, but ProofWeave did not infer that the target means the same thing as the
-human statement. Re-running unchanged input reuses the verified artifact only
-after checking its hashes; the returned run has `cache_hit: true` and zero
-model, semantic-extraction, and certifier invocations.
+The result is `CERTIFIED + UNCONFIRMED` on purpose. Lean proved the exact formal target, but
+ProofWeave did not conclude that the target means the same thing as the human statement. If you
+run the unchanged input again, Core reuses the verified artifact only after checking its hashes.
+That second run returns `cache_hit: true` with zero model, semantic-extraction and certifier
+invocations.
 
-For an actual run with exact input, generated Lean, certificate hashes and a cache-hit readback, see the [recorded simple-ring walkthrough](docs/walkthroughs/simple-ring/README.md).
+The [recorded simple-ring walkthrough](docs/walkthroughs/simple-ring/README.md) shows a real run with the exact input, the generated Lean, the certificate hashes and a cache-hit readback.
 
 ## When ProofWeave fits
 
 Use Core when you need to:
 
 - put an algebraic or arithmetic claim behind a pinned Lean check;
-- expose which steps of a longer proof have certificates and which remain
-  unsupported;
-- keep assumptions, quantifiers, claim dependencies, revisions, and lifecycle
-  visible instead of collapsing them into one “verified” label;
-- detect dependency cycles, missing active dependencies, stale alignment, and
-  tampered cached artifacts deterministically;
-- produce a conservative paper view and proof map without changing the
-  certificate obligations; or
-- build a reproducible, checksummed evaluation bundle for a fixed corpus or a
-  theorem pack.
+- show which steps of a longer proof have certificates and which remain unsupported;
+- keep assumptions, quantifiers, claim dependencies, revisions and lifecycle visible, instead of
+  collapsing them into one “verified” label;
+- detect dependency cycles, missing active dependencies, stale alignment and tampered cached
+  artifacts deterministically;
+- produce a conservative paper view and proof map without changing the certificate obligations; or
+- build a reproducible evaluation bundle with checksums for a fixed corpus or a theorem pack.
 
 Core is not a good fit when you need:
 
-- automated proof search, natural-language formalization, arbitrary Lean
-  tactics/imports, or an interactive proof-assistant UI;
-- mathematical discovery, literature search, novelty determination, peer
-  review, or proof of a theorem's real-world interpretation;
-- multi-agent orchestration, model routing, research project management, or a
-  hosted collaboration database; or
-- a global soundness, completeness, or “simplest proof” guarantee.
+- automated proof search, natural-language formalization, arbitrary Lean tactics or imports, or an
+  interactive proof-assistant UI;
+- mathematical discovery, literature search, novelty determination, peer review, or proof of a
+  theorem's real-world interpretation;
+- multi-agent orchestration, model routing, research project management, or a hosted
+  collaboration database; or
+- a guarantee of global soundness, completeness or the “simplest proof”.
 
 ## Quick start from source
 
 ### 1. Prerequisites
+
+You need:
 
 - Python 3.11 or newer;
 - Git; and
 - [Elan](https://github.com/leanprover/elan), the Lean toolchain manager.
 
 The repository pins Lean in [`lean-toolchain`](lean-toolchain), Mathlib in
-[`lakefile.toml`](lakefile.toml), and the complete dependency revisions in
-[`lake-manifest.json`](lake-manifest.json). Although the bootstrap commands use
-`lake` from the shell, certification resolves `lean` and `lake` from the
-Elan-managed directory selected by the project pin (or `ELAN_HOME`). A
-PATH-only shim is not treated as a frozen certifier.
+[`lakefile.toml`](lakefile.toml), and every dependency revision in
+[`lake-manifest.json`](lake-manifest.json). The bootstrap commands call `lake` from the shell, but
+certification takes `lean` and `lake` from the Elan-managed directory that the project pin selects,
+or from `ELAN_HOME`. A shim that exists only on `PATH` does not count as a pinned certifier.
 
 ### 2. Install and freeze the formal environment
 
@@ -134,11 +131,10 @@ lake update mathlib
 lake exe cache get
 ```
 
-On Windows, `py -3.14` can replace `python` in every command. The first Mathlib
-checkout/cache download can take several minutes. Core itself has no Python
-runtime dependency; Lean/Mathlib is required only for real certification.
-Without the complete pinned environment, Core fails closed with
-`PARTIAL/HOST_LIMITED` instead of manufacturing a certificate.
+On Windows, `py -3.14` can replace `python` in every command. The first Mathlib checkout and cache
+download can take several minutes. Core itself has no Python runtime dependency, and Lean/Mathlib
+is needed only for real certification. Without the complete pinned environment, Core fails closed
+with `PARTIAL/HOST_LIMITED` and does not produce a certificate.
 
 ### 3. Initialize and certify the example
 
@@ -148,29 +144,29 @@ python -m proofweave run examples/simple_ring/theorem.md
 python -m proofweave status square-successor
 ```
 
-`init` creates `workspace/claims/` and `artifacts/` without overwriting existing
-files. `run` prints JSON and writes the complete run. `status` reads claim
-revision state and returns counts for all three independent status axes.
+`init` creates `workspace/claims/` and `artifacts/` without overwriting existing files. `run`
+prints JSON and writes the complete run. `status` reads the claim revision state and returns counts
+for each of the three independent status axes.
 
-Do not add `--confirm-alignment` mechanically. After a human compares the exact
-`## Statement` plus quantifiers with the Lean `target`—and separately checks
-that the assumptions and dependencies match the intended theorem—this command
-records a local alignment attestation:
+Do not add `--confirm-alignment` out of habit. Use it only after a person has compared the exact
+`## Statement` and its quantifiers with the Lean `target`, and has separately checked that the
+assumptions and dependencies match the intended theorem. The command then records a local
+alignment attestation:
 
 ```console
 python -m proofweave run examples/simple_ring/theorem.md --confirm-alignment
 ```
 
-The alignment hash binds `statement_hash` (statement plus quantifiers) to the
-formal-target hash; the stored source hash detects other source edits. The flag
-does not authenticate the reviewer or establish novelty, peer review, or truth
-outside the encoded formal target. A later source change makes the stored
-alignment appear `STALE` until the new revision is inspected and run.
+The alignment hash binds `statement_hash`, which covers the statement and its quantifiers, to the
+hash of the formal target. The stored source hash detects any other edit to the source. The flag
+does not authenticate the reviewer, and it does not establish novelty, peer review or truth beyond
+the encoded formal target. After a later source change, the stored alignment shows as `STALE` until
+someone inspects and runs the new revision.
 
 ## Input contract
 
-A claim begins with TOML front matter, then `## Statement` and `## Proof`. A
-whole-claim certificate goes in an optional `## Certificate` section:
+A claim starts with TOML front matter, followed by `## Statement` and `## Proof`. A certificate
+for the whole claim goes in an optional `## Certificate` section:
 
 ````markdown
 +++
@@ -197,10 +193,10 @@ tactic = "ring"
 ```
 ````
 
-Important parsing rules:
+The parser enforces these rules:
 
 - `claim_id` must match `[A-Za-z0-9][A-Za-z0-9._-]{0,63}`.
-- `assumptions` must be explicit; use `["none"]` when appropriate.
+- `assumptions` must be explicit. Use `["none"]` when there are none.
 - `quantifiers` and `dependencies` are arrays. Every dependency must already
   have exactly one `ACTIVE` claim revision in the same project.
 - Claim dependencies and proof-node dependencies must be acyclic.
@@ -209,8 +205,8 @@ Important parsing rules:
 
 ### Longer, partially formalized proofs
 
-Without a whole-claim `## Certificate`, Core builds one deterministic proof IR.
-Use headings of the following form:
+When there is no whole-claim `## Certificate`, Core builds one deterministic proof IR. Write the
+proof with headings of the following form:
 
 ````markdown
 ### normalize [computational]
@@ -228,11 +224,10 @@ Depends: normalize
 Explain why the certified endpoint establishes the intended mathematical step.
 ````
 
-The roles are `semantic`, `bridge`, `computational`, and `alias`. Every
-non-`alias` node is a deductive obligation. A node without a supported
-certificate remains in the output as unsupported, so the whole run is
-`PARTIAL`; Core never starts a reviewer loop to hide the gap. See the bundled
-[`partial_proof`](examples/partial_proof/theorem.md) example.
+The roles are `semantic`, `bridge`, `computational`, and `alias`. Every node other than an `alias`
+is a deductive obligation. A node without a supported certificate stays in the output as
+unsupported, which makes the whole run `PARTIAL`. Core never starts a reviewer loop to hide the
+gap. The bundled [`partial_proof`](examples/partial_proof/theorem.md) example shows this case.
 
 ## Commands and exit status
 
@@ -244,44 +239,41 @@ Core deliberately exposes exactly four top-level commands:
 | `proofweave run INPUT [--root DIR] [--confirm-alignment]` | Parse, certify, render, hash, and record one claim revision | Yes |
 | `proofweave status [CLAIM_ID] [--root DIR]` | Show stored revisions and counts by status axis | No |
 | `proofweave check [--root DIR]` | Verify schemas, hashes, DAGs, artifact integrity, and Core budgets | No |
-
-Use either the installed `proofweave` entry point or
-`python -m proofweave`. Exit codes are automation-safe:
+You can use either the installed `proofweave` entry point or `python -m proofweave`. The exit
+codes are designed to be safe for automation:
 
 | Invocation | Exit `0` | Exit `1` | Exit `2` |
 | --- | --- | --- | --- |
 | `run` | `CERTIFIED` | `FAILED` or invalid input/runtime error | `PARTIAL`, including `HOST_LIMITED` |
 | `check` | `PASS` | `FAIL` or error | — |
 | `init`, `status` | Success | Error | — |
-
-Treat exit `2` as an incomplete proof, not a successful warning.
+Treat exit `2` as an incomplete proof, not as a successful run with a warning.
 
 ## Reading the three status axes
 
-The axes are orthogonal; never infer one from another.
+The three axes are independent, so never infer one from another.
 
 | Axis | Values | Meaning |
 | --- | --- | --- |
 | `proof_status` | `UNVERIFIED`, `PARTIAL`, `CERTIFIED`, `FAILED` | Machine-certificate result for this revision. `UNVERIFIED` is retained for records such as conservative v1 migrations. |
 | `alignment` | `UNCONFIRMED`, `CONFIRMED`, `STALE` | Whether a human hash-bound statement/formal-target comparison is current. |
 | `lifecycle` | `ACTIVE`, `SUPERSEDED`, `REVOKED` | Revision governance; it does not change certificate truth. |
-
 Common combinations:
 
-- `CERTIFIED + UNCONFIRMED + ACTIVE`: Lean proved the formal target; prose
-  equivalence has not been attested.
-- `CERTIFIED + CONFIRMED + ACTIVE`: the formal target passed and a human
-  attested the bound pair. This still says nothing about novelty or peer review.
-- `CERTIFIED + STALE`: the prior certificate record still exists, but the
-  source bytes changed after alignment; re-inspect and re-run.
-- `PARTIAL + UNCONFIRMED`: at least one obligation is unsupported or the host
-  lacks the frozen Lean environment.
-- `FAILED`: at least one submitted formal obligation failed Lean.
+- `CERTIFIED + UNCONFIRMED + ACTIVE` means Lean proved the formal target, and nobody has yet
+  attested that the prose is equivalent.
+- `CERTIFIED + CONFIRMED + ACTIVE` means the formal target passed and a human attested the bound
+  pair. This still says nothing about novelty or peer review.
+- `CERTIFIED + STALE` means the earlier certificate record still exists, but the source bytes
+  changed after alignment. Inspect the claim again and re-run it.
+- `PARTIAL + UNCONFIRMED` means at least one obligation is unsupported, or the host lacks the
+  pinned Lean environment.
+- `FAILED` means Lean rejected at least one submitted formal obligation.
 
-Research-pack statuses (`OPEN`, `PROPOSED`, `COMPUTATIONAL`, `VERIFIED`) are a
-separate evidence layer, not a fourth Core claim axis. The current theorem-pack
-schema intentionally rejects every `VERIFIED` pack because it cannot bind all
-required independent-review and novelty evidence.
+The research-pack statuses `OPEN`, `PROPOSED`, `COMPUTATIONAL` and `VERIFIED` belong to a
+separate evidence layer and are not a fourth Core claim axis. The current theorem-pack schema
+rejects every `VERIFIED` pack on purpose, because it cannot yet bind all the required evidence of
+independent review and novelty.
 
 ## Pipeline and artifact layout
 
@@ -315,28 +307,25 @@ artifacts/square-successor/<run-id>/
 └── run.sha256
 ```
 
-Structured long proofs also write `proof_ir.json`. `paper_proof.md` and
-`concept_map.md` are presentation views, never extra proof authority. Every
-payload artifact is hashed in `run.json`; `run.sha256` separately protects that
-run record. A cache key binds the material claim, certificate, dependency,
-certifier, and toolchain inputs. Missing, moved, inconsistent, or modified
-artifacts are not silently reused.
+Structured long proofs also write `proof_ir.json`. `paper_proof.md` and `concept_map.md` are
+presentation views and never add proof authority. `run.json` records the hash of every payload
+artifact, and `run.sha256` separately protects that run record. A cache key binds the material
+claim, certificate, dependency, certifier and toolchain inputs. Core never silently reuses an
+artifact that is missing, moved, inconsistent or modified.
 
 ## Certificate language and trust boundary
 
-The generated Lean file always starts with fixed `import Mathlib` and disables
-automatic implicit parameters. The certificate block accepts only:
+The generated Lean file always starts with a fixed `import Mathlib` and disables automatic
+implicit parameters. The certificate block accepts only:
 
 - `ring`, `ring_nf`, `norm_num`, `linarith`, `nlinarith`, and `positivity`; or
-- restricted `exact`, referring to an earlier certified node in the same
-  generated batch.
+- a restricted `exact` that refers to an earlier certified node in the same generated batch.
 
-Core rejects arbitrary commands/imports, tactics outside the allowlist,
-`sorry`, `admit`, custom axioms, unsafe/meta execution, `run_tac`,
-`native_decide`, and certificate syntax that attempts to define its own theorem
-or declaration.
+Core rejects arbitrary commands and imports, tactics outside the allowlist, `sorry`, `admit`,
+custom axioms, unsafe or meta execution, `run_tac`, `native_decide`, and any certificate syntax
+that tries to define its own theorem or declaration.
 
-What is bound into certification and reuse includes:
+Certification and cache reuse are bound to:
 
 - the statement, assumptions, quantifiers, and dependency certificate digests;
 - the complete certificate view and certifier version;
@@ -345,11 +334,11 @@ What is bound into certification and reuse includes:
 - exact, clean dependency Git revisions plus the observed Lean-artifact
   digests.
 
-The trusted computing base still includes the Python implementation, operating
-system, Git executable, Elan-managed Lean toolchain, Lean kernel/compiler, and
-the pinned Mathlib dependency closure. Hashes detect changed bytes; they do not
-prove that the host was uncompromised. A passing Lean result proves only the
-generated formal target under that environment. It does not establish:
+The trusted computing base still includes the Python implementation, the operating system, the
+Git executable, the Elan-managed Lean toolchain, the Lean kernel and compiler, and the pinned
+Mathlib dependency closure. Hashes detect changed bytes, but they do not prove that the host was
+uncompromised. A passing Lean result proves only the generated formal target in that environment.
+It does not establish:
 
 - equivalence to the natural-language statement without human alignment;
 - truth of informal assumptions or the intended domain interpretation;
@@ -358,8 +347,9 @@ generated formal target under that environment. It does not establish:
   or
 - global Lean/Mathlib/host soundness.
 
-See the [threat model](docs/design/threat_model.md) and the destructive
-[Core v2 architecture record](docs/v2_refactor.md) for the full boundary.
+The [threat model](docs/design/threat_model.md) and the
+[Core v2 architecture record](docs/v2_refactor.md), which documents the destructive v2 refactor,
+describe the full boundary.
 
 ## Evaluation and theorem packs
 
@@ -373,8 +363,8 @@ python -m proofweave check
 python -m tools.check_workflow_security
 ```
 
-For a real fixed-corpus evidence bundle, first freeze the Lean environment as in
-the quick start and require it explicitly:
+To produce a real fixed-corpus evidence bundle, first set up the pinned Lean environment as in the
+quick start, then require it explicitly:
 
 ```powershell
 $env:PROOFWEAVE_REQUIRE_LEAN = "1"
@@ -383,51 +373,49 @@ python -m tools.evaluate core --output artifacts/evaluation
 
 On POSIX shells, use
 `PROOFWEAVE_REQUIRE_LEAN=1 python -m tools.evaluate core --output artifacts/evaluation`.
-The bundle contains `evaluation.json`, `summary.md`, `environment.txt`, retained
-Lean sources, and `SHA256SUMS`.
+The bundle contains `evaluation.json`, `summary.md`, `environment.txt`, the retained Lean sources
+and `SHA256SUMS`.
 
-The fixed corpus has 42 stable cases: 14 positive, 14 paired negative, 8 escape
-attempts, and 6 fail-closed state/integrity cases, plus a cold/warm replay. A
-passing result is finite-corpus `COMPUTATIONAL` evidence, not a global soundness
-proof. For research packs, attestation format, release evidence, and exact
-promotion limits, read the [evaluation protocol](docs/evaluation_protocol.md)
-and [claim–evidence matrix](docs/claim_evidence_matrix.md).
+The fixed corpus has 42 stable cases: 14 positive, 14 paired negative, 8 escape attempts and 6
+fail-closed state and integrity cases, plus a cold and a warm replay. A passing result is
+`COMPUTATIONAL` evidence on a finite corpus, not a proof of global soundness. The
+[evaluation protocol](docs/evaluation_protocol.md) and the
+[claim–evidence matrix](docs/claim_evidence_matrix.md) cover research packs, the attestation
+format, release evidence and the exact limits on promotion.
 
-CI runs Python 3.11 and 3.14 on Ubuntu and Windows, with real pinned Lean
-certification on both platforms. Tag workflows build and attest candidate
-evidence and create a **draft** release only; publication remains a separate
-human action.
+CI runs Python 3.11 and 3.14 on Ubuntu and Windows, with real pinned Lean certification on both
+platforms. Tag workflows build and attest candidate evidence and create only a **draft** release.
+Publishing that release remains a separate human action.
 
 ## Relationship to the other projects
 
-The repositories are complementary, but there is no implied runtime dependency
-or automatic data interchange:
+These repositories complement each other, but none depends on another at runtime, and they do not
+exchange data automatically:
 
 | Project | Narrow responsibility |
 | --- | --- |
 | **ProofWeave Core** | Certify exact formal targets, expose partial obligations, and retain content-addressed proof runs. |
 | [RigorGraph](https://github.com/f0909172434/rigorgraph) | Audit broader claim–evidence traceability and human workflow records; it is not a theorem prover. |
 | [HonestCI](https://github.com/f0909172434/honest-ci) | Check whether expected test evidence actually ran; it makes no mathematical truth claim. |
-
 ## Development and migration
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before changing Core. The enforced design
-budget is ten production modules, three schemas, four commands, no Python
-runtime dependencies, no model calls/reviewer loops, at most one supported cold
-Lean batch, and zero extra work on an unchanged warm run.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before changing Core. The enforced design budget is ten
+production modules, three schemas, four commands, no Python runtime dependencies, and no model
+calls or reviewer loops. A supported cold run may use at most one Lean batch, and an unchanged warm
+run must do zero extra work.
 
-Core v1 remains recoverable from Git history; v2 does not ship a compatibility
-runtime. One-time formal-record migration is available as an explicit tool:
+Core v1 can still be recovered from Git history. v2 does not ship a compatibility runtime. A
+one-time migration of formal records is available as an explicit tool:
 
 ```console
 python -m tools.migrate_v1 OLD_FACT_GRAPH --root .
 ```
 
-Migration preserves formal statement fields and dependencies after validation.
-Non-formal evidence is reported and skipped. Every v1 human `VERIFIED` record
-maps conservatively to `UNVERIFIED + UNCONFIRMED`, never to `CERTIFIED`.
+Migration keeps the formal statement fields and dependencies after validating them. Non-formal
+evidence is reported and skipped. Every human `VERIFIED` record from v1 maps conservatively to
+`UNVERIFIED + UNCONFIRMED`, never to `CERTIFIED`.
 
 ## License and security
 
-ProofWeave Core is available under the [MIT License](LICENSE). Report suspected
-vulnerabilities through [SECURITY.md](SECURITY.md), not a public issue.
+ProofWeave Core is available under the [MIT License](LICENSE). Please report suspected
+vulnerabilities as described in [SECURITY.md](SECURITY.md), not in a public issue.
